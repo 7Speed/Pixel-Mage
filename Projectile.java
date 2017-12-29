@@ -47,47 +47,6 @@ abstract class Projectile{
     return hitbox;
   }
   
-  public void displace(int direction, int speed){
-    if (direction == 4){
-      positionX += speed;
-      spawnX += speed;
-    } else if (direction == 5){
-      positionX += Math.round(speed/Math.sqrt(2));
-      spawnX += Math.round(speed/Math.sqrt(2));
-      positionY -= Math.round(speed/Math.sqrt(2));
-      spawnY -= Math.round(speed/Math.sqrt(2));
-    } else if (direction == 6){
-      positionY -= speed;
-      spawnY -= speed;
-    } else if (direction == 7){
-      positionX -= Math.round(speed/Math.sqrt(2));
-      spawnX -= Math.round(speed/Math.sqrt(2));
-      positionY -= Math.round(speed/Math.sqrt(2));
-      spawnY -= Math.round(speed/Math.sqrt(2));
-    } else if (direction == 0){
-      positionX -= speed;
-      spawnX -= speed;
-    } else if (direction == 1){
-      positionX -= Math.round(speed/Math.sqrt(2));
-      spawnX -= Math.round(speed/Math.sqrt(2));
-      positionY += Math.round(speed/Math.sqrt(2));
-      spawnY += Math.round(speed/Math.sqrt(2));
-    } else if (direction == 2){
-      positionY += speed;
-      spawnY += speed;
-    } else if (direction == 3){
-      positionX += Math.round(speed/Math.sqrt(2));
-      spawnX += Math.round(speed/Math.sqrt(2));
-      positionY += Math.round(speed/Math.sqrt(2));
-      spawnY += Math.round(speed/Math.sqrt(2));
-    }
-    //deltaX = targetX - spawnX;
-    //deltaY = targetY - spawnY;
-    //distance = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
-    //addX = (deltaX * speed)/distance;
-    //addY = (deltaY * speed)/distance;
-  }
-  
   public void move(){
     lifeTime++;
     positionX = (int)Math.round(spawnX + addX * lifeTime);

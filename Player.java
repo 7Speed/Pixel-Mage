@@ -8,7 +8,6 @@ abstract class Player{
   private int health;
   private int mana;
   private int element;
-  private int speed = 5;
   private static int size = 20;
   private Rectangle hitbox;
   private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
@@ -22,9 +21,6 @@ abstract class Player{
     this.reloadCap = reloadCap;
     hitbox = new Rectangle(positionX, positionY, size, size);
   }
-  public int getSpeed(){
-    return speed;
-  }
   public int getX(){
     return positionX;
   }
@@ -34,15 +30,7 @@ abstract class Player{
   public static int getSize(){
     return size;
   }
-  public void move(int direction, int speed, ArrayList<Enemy> enemies){
-    for (int i = 0; i < enemies.size(); i++){
-      enemies.get(i).displace(direction, speed);
-    }
-    for (int i = 0; i < projectiles.size(); i++){
-      projectiles.get(i).displace(direction, speed);
-    }
-  }
-    /*
+  public void move(int direction, int speed){
     if (direction == 0){
       positionX += speed;
     } else if (direction == 1){
@@ -63,8 +51,8 @@ abstract class Player{
     } else if (direction == 7){
       positionX += Math.round(speed/Math.sqrt(2));
       positionY += Math.round(speed/Math.sqrt(2));
-    }*/
-  
+    }
+  }
   public void addProjectile(Projectile projectile){
     projectiles.add(projectile);
   }
