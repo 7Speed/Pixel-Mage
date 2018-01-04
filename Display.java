@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 
 public class Display extends JPanel {
 
-	private BufferedImage image;
+	private BufferedImage archer, enemy;
 	private int middleX, middleY;
 	private final Game game;
 	private final Player player;
@@ -25,8 +25,8 @@ public class Display extends JPanel {
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent arg0) {
-				middleX = getWidth() / 2 - image.getWidth() / 2;
-				middleY = getHeight() / 2 - image.getHeight() / 2;
+				middleX = getWidth() / 2 - archer.getWidth() / 2;
+				middleY = getHeight() / 2 - archer.getHeight() / 2;
 			}
 		});
 		addKeyListener(new KeyAdapter() {
@@ -56,21 +56,25 @@ public class Display extends JPanel {
 		});
 		setDoubleBuffered(true);// Make the panel no blink
 		try {
-			image = ImageIO.read(new File("Archer.png"));// Set the image for
+			archer = ImageIO.read(new File("Archer.png"));// Set the image for
 															// the sprite
+			enemy = ImageIO.read(new File("Snake1.png"));
 		} catch (IOException e) {
 			e.printStackTrace();// If the image does not exist this will happen
 		}
-		middleX = getWidth() / 2 - image.getWidth() / 2;
-		middleY = getHeight() / 2 - image.getHeight() / 2;
+		middleX = getWidth() / 2 - archer.getWidth() / 2;
+		middleY = getHeight() / 2 - archer.getHeight() / 2;
 	}
 
 	public void paint(Graphics g) {
-		g.drawImage(image, middleX, middleY, this);
+		g.clearRect(0, 0, getWidth(), getHeight());
+		g.drawImage(archer, middleX, middleY, this);
 		ArrayList<Enemy> enemies = game.enemies;
 		for (Enemy e : enemies) {
 			if (player.inRenderRange(e, middleX, middleY)) {
-				//g.drawImage(arg0, arg1, arg2, arg3)
+				int dx = e.getX() - player.getX() + middleX + Enemy.getHalfSize();
+				int dy = e.getY() - player.getY() + middleY + Enemy.getHalfSize();
+				g.drawImage(enemy, dx, dy, this);
 			}
 		}
 	}

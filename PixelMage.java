@@ -7,9 +7,10 @@
 //       window.frame.setVisible(true);
 //  }
 //}
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
 
 public class PixelMage {
 
@@ -18,11 +19,13 @@ public class PixelMage {
 
 	/**
 	 * Launch the application.
+	 * @throws InterruptedException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
+		game = new Game();
+		while(game==null);
 		PixelMage window = new PixelMage();
 		window.frame.setVisible(true);
-		game = new Game();
 	}
 
 	/**
@@ -40,8 +43,8 @@ public class PixelMage {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 		Display d = new Display(game);
+		game.setDisplay(d);
 		frame.getContentPane().add(d, BorderLayout.CENTER);
 		d.setVisible(true);
 		d.repaint();
