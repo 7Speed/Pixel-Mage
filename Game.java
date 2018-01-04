@@ -23,6 +23,9 @@ class Game {
 	}
 
 	public void update() {
+
+		player.move();
+		
 		if (reloadCount < player.getReloadCap()) {
 			reloadCount++;
 		}
@@ -53,7 +56,7 @@ class Game {
 					collision = true;
 				}
 			}
-
+			
 			player.getProjectiles().get(i).move();
 			if (player.getProjectiles().get(i).getLifeTime() > 500) {
 				player.getProjectiles().remove(i);

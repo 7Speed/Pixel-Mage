@@ -18,7 +18,7 @@ public class Display extends JPanel {
 	private final Game game;
 	private final Player player;
 
-	public Display(Game game) {
+	public Display(final Game game) {
 		super();// Call the constructor for normal JPanel
 		this.game = game;
 		player = game.getPlayer();
@@ -35,11 +35,11 @@ public class Display extends JPanel {
 				if (e.getKeyChar() == 'd')
 					game.player.setXDir(1);
 				if (e.getKeyChar() == 'w')
-					game.player.setYDir(1);
+					game.player.setYDir(-1);
 				if (e.getKeyChar() == 'a')
 					game.player.setXDir(-1);
 				if (e.getKeyChar() == 's')
-					game.player.setYDir(-1);
+					game.player.setYDir(1);
 			}
 
 			@Override

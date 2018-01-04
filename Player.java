@@ -45,12 +45,10 @@ abstract class Player {
 	}
 
 	public void setXDir(int xDir) {
-		System.out.println(xDir);
 		this.xDir = xDir;
 	}
 
 	public void setYDir(int yDir) {
-		System.out.println(xDir);
 		this.yDir = yDir;
 	}
 
