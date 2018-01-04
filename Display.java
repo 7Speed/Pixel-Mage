@@ -55,6 +55,7 @@ public class Display extends JPanel {
 			}
 		});
 		setDoubleBuffered(true);// Make the panel no blink
+		setFocusable(true);
 		try {
 			archer = ImageIO.read(new File("Archer.png"));// Set the image for
 															// the sprite
