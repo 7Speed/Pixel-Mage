@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-public class ShapeTest extends JFrame implements KeyListener, MouseListener{//make many changes, etc jpanel
+public class ShapeTest extends JFrame implements KeyListener, MouseListener{
   public int x = 0;
   public int y = 0;
   private boolean dPressed = false;
@@ -56,9 +56,6 @@ public class ShapeTest extends JFrame implements KeyListener, MouseListener{//ma
       g.drawRect((enemies.get(i)).getX(),(enemies.get(i)).getY(),Enemy.getSize(),Enemy.getSize());
       //g.drawRect((int)enemies.get(i).getHitbox().getX(), (int)enemies.get(i).getHitbox().getY(), 40, 40);
     }
-    //Graphics2D[] projectileDrawings = new Graphics2D[numProjectiles];
-    //g2d.setColor(Color.WHITE);
-    //Rectangle rect2 = new Rectangle(100, 100, 20, 20);
     for (int i = 0; i < numProjectiles; i++){
       g.drawRect((projectiles.get(i)).getX(),(projectiles.get(i)).getY(),10,10);
     }
