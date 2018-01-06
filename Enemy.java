@@ -11,7 +11,7 @@ class Enemy {
 	private int y;
 	double speed = 2;
 	private static int size = 40;
-	private static int halfSize = size/2;
+	private static int halfSize = size / 2;
 	private Rectangle hitbox;
 
 	public Enemy(int health, int aggro, int x, int y) {
@@ -37,7 +37,7 @@ class Enemy {
 	public static int getHalfSize() {
 		return halfSize;
 	}
-	
+
 	public Rectangle getHitbox() {
 		return hitbox;
 	}

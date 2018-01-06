@@ -8,7 +8,6 @@
 //  }
 //}
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 
@@ -19,11 +18,13 @@ public class PixelMage {
 
 	/**
 	 * Launch the application.
-	 * @throws InterruptedException 
+	 * 
+	 * @throws InterruptedException
 	 */
 	public static void main(String[] args) throws InterruptedException {
 		game = new Game();
-		while(game==null);
+		while (game == null)
+			;
 		PixelMage window = new PixelMage();
 		window.frame.setVisible(true);
 	}
