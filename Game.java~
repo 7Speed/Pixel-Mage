@@ -1,15 +1,15 @@
-import java.awt.event.*;
-import java.awt.*;
-import javax.swing.*;
+import java.awt.MouseInfo;
 import java.util.ArrayList;
 
 class Game {
 
 	public Archer player;
 	public ArrayList<Enemy> enemies;
+
 	private int reloadCount = 0;
 
 	private Display test;// For testing only
+	// ShapeTest draw = new ShapeTest();// ---------------------
 
 	public Game() {
 		player = new Archer(0, 0, 100, 100, 0);
@@ -25,26 +25,17 @@ class Game {
 	public void update() {
 
 		player.move();
-		
-		if (reloadCount < player.getReloadCap()) {
-			reloadCount++;
-		}
-		/*
-		 * if (draw.getLeftClick() && (reloadCount >= player.getReloadCap())) {
-		 * player.fire(player.getX() + Player.getSize() / 2, player.getY() +
-		 * Player.getSize() / 2, (int)
-		 * MouseInfo.getPointerInfo().getLocation().getX(), (int)
-		 * MouseInfo.getPointerInfo().getLocation().getY()); reloadCount = 0; }
-		 */
+		player.tryFire();
+
 		int centeredX = 40 / 2 - Player.getSize() / 2;
 		int centeredY = 40 / 2 - Player.getSize() / 2;
 		for (int i = 0; i < enemies.size(); i++) {
 			enemies.get(i).move(player.getX() - centeredX, player.getY() - centeredY);
 		}
-		for (int i = 0; i < player.getProjectiles().size(); i++) {
+		for (Projectile p : player.getProjectiles()) {
 			boolean collision = false;
 			for (int j = 0; j < enemies.size(); j++) {
-				if (enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox())) {
+				if (enemies.get(j).getHitbox().intersects(p.getHitbox())) {
 					// System.out.println(enemies.get(j).getHitbox().getLocation()
 					// + ": Enemy" + enemies.get(j).getHitbox().getHeight()
 					// + ": Enemy" +
@@ -56,19 +47,19 @@ class Game {
 					collision = true;
 				}
 			}
-			
-			player.getProjectiles().get(i).move();
-			if (player.getProjectiles().get(i).getLifeTime() > 500) {
-				player.getProjectiles().remove(i);
+
+			p.move();
+			if (p.getLifeTime() > 500) {
+				player.removeProjectile(p);
 			}
 			if (collision) {
-				player.getProjectiles().remove(i);
+				player.removeProjectile(p);
 			}
 		}
+		player.updateProjectiles();
 		/*
 		 * draw.enemies(enemies); draw.projectiles(player.getProjectiles());
-		 * draw.setCoord(new int[] { player.getX(), player.getY() });
-		 * draw.repaint();
+		 * draw.setCoord(new int[] { player.getX(), player.getY() }); draw.repaint();
 		 */
 		if (Math.random() < 0.05) {
 			enemies.add(new Enemy(75, 40, (int) (Math.random() * 400), (int) (Math.random() * 400) + 200));
@@ -92,6 +83,7 @@ class Game {
 
 }
 
+// change
 class GameUpdate implements Runnable {
 
 	private final Game g;
