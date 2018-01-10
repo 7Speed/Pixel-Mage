@@ -16,7 +16,7 @@ class Game{
   Display draw;
   
   public Game(){
-    player = new Archer((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2,(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()/2,100,100,0);
+    player = new Archer((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2-player.getSize()/2,(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()/2-player.getSize()/2,100,100,0);
     enemies = new ArrayList<Enemy>();
     obstacles = new ArrayList<Wall>();
     enemyProjectiles = new ArrayList<Projectile>();
@@ -114,13 +114,15 @@ class Game{
     int centeredY = Enemy.getSize()/2 - Player.getSize()/2;
     for (int i = 0; i < enemies.size(); i++){
       enemies.get(i).debuffs();
+      if ((enemies.get(i) instanceof ProjectileE) && (((ProjectileE)(enemies.get(i))).getReload() < ((ProjectileE)(enemies.get(i))).getReloadCap())){
+          ((ProjectileE)(enemies.get(i))).addReload();
+      }
       if (enemies.get(i) instanceof ProjectileE && ((ProjectileE)(enemies.get(i))).getDistance(player.getX()+Player.getSize()/2, player.getY()+Player.getSize()/2) <= ((ProjectileE)(enemies.get(i))).getRange()){
         if (((ProjectileE)(enemies.get(i))).getReload() >= ((ProjectileE)(enemies.get(i))).getReloadCap()){
           ((ProjectileE)(enemies.get(i))).fire(enemies.get(i).getX() + enemies.get(i).getSize()/2, enemies.get(i).getY() + enemies.get(i).getSize()/2, player.getX()+player.getSize()/2, player.getY()+player.getSize()/2);
           ((ProjectileE)(enemies.get(i))).wipeReload();
-        }else{
-          ((ProjectileE)(enemies.get(i))).addReload(); 
         }
+        enemies.get(i).updateHitbox();
       }else{
         enemies.get(i).move(player.getX() - centeredX, player.getY() - centeredY); 
       }

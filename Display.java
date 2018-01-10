@@ -326,6 +326,8 @@ public class Display extends JPanel implements KeyListener, MouseListener{
     for (int i = 0; i < numEnemies; i++){
       if ((enemies.get(i).getX() - enemies.get(i).getSize()/2 <= x + middleX && enemies.get(i).getX() + enemies.get(i).getSize()/2 >= x - middleX) && (enemies.get(i).getY() - enemies.get(i).getSize()/2 <= y + middleY && enemies.get(i).getY() + enemies.get(i).getSize()/2 >= y - middleY)) {
         g.drawImage(enemy,(enemies.get(i)).getX(),(enemies.get(i)).getY(),this);
+        g.setColor(Color.RED);
+        //g.drawRect((int)enemies.get(i).getHitbox().getX(), (int)enemies.get(i).getHitbox().getY(), (int)enemies.get(i).getHitbox().getWidth(), (int)enemies.get(i).getHitbox().getHeight());
         if (enemies.get(i).getBurn()){
           g.setColor(Color.RED);
           g.drawRect(enemies.get(i).getX(), enemies.get(i).getY()-10,8,8);

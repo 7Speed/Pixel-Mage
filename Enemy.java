@@ -143,6 +143,10 @@ class Enemy {
     }
   }
   
+  public void updateHitbox(){
+    hitbox.setLocation(this.x,this.y);
+  }
+  
   public void displace(int [] displaceModifier){
     x -= displaceModifier[0];
     y -= displaceModifier[1];
