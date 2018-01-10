@@ -46,6 +46,8 @@ public class Display extends JPanel implements KeyListener, MouseListener{
   private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
   private int numProjectiles;
   private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
+  private int numEnemyProjectiles;
+  private ArrayList<Projectile> enemyProjectiles = new ArrayList<Projectile>();
   private int numObstacles;
   private ArrayList<Wall> obstacles = new ArrayList<Wall>();
   public void setX(int x){
@@ -77,6 +79,13 @@ public class Display extends JPanel implements KeyListener, MouseListener{
   public void projectiles(ArrayList<Projectile> projectiles){
     numProjectiles = projectiles.size();
     this.projectiles = projectiles;
+  }
+  
+  public void enemyProjectiles(ArrayList<Projectile> enemyProjectiles){
+    if (enemyProjectiles!=null){
+      numEnemyProjectiles = enemyProjectiles.size();
+      this.enemyProjectiles = enemyProjectiles;
+    }
   }
   
   public void obstacles(ArrayList<Wall> obstacles){
@@ -388,6 +397,9 @@ public class Display extends JPanel implements KeyListener, MouseListener{
         g.setColor(Color.BLACK);
         g.drawRect((projectiles.get(i)).getX()-10,(projectiles.get(i)).getY()-10,20,20);
       }
+    }
+    for (int i = 0; i < numEnemyProjectiles; i++){
+      g.drawRect((enemyProjectiles.get(i)).getX(),(enemyProjectiles.get(i)).getY(),10,10);
     }
   }
   

@@ -8,6 +8,7 @@ class Game{
   //Enemy enemy1 = new Enemy(75,40,50,60);
   ArrayList<Enemy> enemies;
   ArrayList<Wall> obstacles;
+  ArrayList<Projectile> enemyProjectiles;
   Background background;
   int reloadCount;
   //enemies.add(enemy1);
@@ -18,6 +19,7 @@ class Game{
     player = new Archer((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2,(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()/2,100,100,0);
     enemies = new ArrayList<Enemy>();
     obstacles = new ArrayList<Wall>();
+    enemyProjectiles = new ArrayList<Projectile>();
     background = new Background(-Display.getBackgroundX()/2,-Display.getBackgroundY()/2);
     reloadCount = 0;
     GameUpdate gu = new GameUpdate(this);
@@ -108,10 +110,20 @@ class Game{
       draw.setFivePressed(false);
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    int centeredX = 40/2 - Player.getSize()/2;
-    int centeredY = 40/2 - Player.getSize()/2;
+    int centeredX = Enemy.getSize()/2 - Player.getSize()/2;
+    int centeredY = Enemy.getSize()/2 - Player.getSize()/2;
     for (int i = 0; i < enemies.size(); i++){
-      enemies.get(i).move(player.getX() - centeredX, player.getY() - centeredY);
+      enemies.get(i).debuffs();
+      if (enemies.get(i) instanceof ProjectileE && ((ProjectileE)(enemies.get(i))).getDistance(player.getX()+Player.getSize()/2, player.getY()+Player.getSize()/2) <= ((ProjectileE)(enemies.get(i))).getRange()){
+        if (((ProjectileE)(enemies.get(i))).getReload() >= ((ProjectileE)(enemies.get(i))).getReloadCap()){
+          ((ProjectileE)(enemies.get(i))).fire(enemies.get(i).getX() + enemies.get(i).getSize()/2, enemies.get(i).getY() + enemies.get(i).getSize()/2, player.getX()+player.getSize()/2, player.getY()+player.getSize()/2);
+          ((ProjectileE)(enemies.get(i))).wipeReload();
+        }else{
+          ((ProjectileE)(enemies.get(i))).addReload(); 
+        }
+      }else{
+        enemies.get(i).move(player.getX() - centeredX, player.getY() - centeredY); 
+      }
       if (enemies.get(i).getHealth() <= 0){
         enemies.remove(i);
       }
@@ -130,6 +142,13 @@ class Game{
         player.move(displaceModifier, enemies, obstacles, background);
       }
       for (int j = 0; j < enemies.size(); j++){
+        if (enemies.get(j) instanceof ProjectileE){
+          for (int k = 0; k < ((ProjectileE)(enemies.get(j))).getProjectiles().size(); k++){
+            if (obstacles.get(i).getHitbox().intersects(((ProjectileE)(enemies.get(j))).getProjectiles().get(k).getHitbox())){
+              ((ProjectileE)(enemies.get(j))).getProjectiles().remove(k);
+            }
+          }
+        }
         if (obstacles.get(i).getHitbox().intersects(enemies.get(j).getHitbox())){
           double parityModifier = (enemies.get(j).getX()-(enemies.get(j).getY()-(obstacles.get(i).getCenterY()-obstacles.get(i).getSlope()*obstacles.get(i).getCenterX()))/obstacles.get(i).getSlope())/Math.abs(enemies.get(j).getX()-(enemies.get(j).getY()-(obstacles.get(i).getCenterY()-obstacles.get(i).getSlope()*obstacles.get(i).getCenterX()))/obstacles.get(i).getSlope());
           int [] displaceModifier = {(int)Math.round(3*enemies.get(j).getSpeed()*-parityModifier*Math.cos(Math.atan(-1/obstacles.get(i).getSlope()))),(int)Math.round(3*enemies.get(j).getSpeed()*-parityModifier*Math.sin(Math.atan(-1/obstacles.get(i).getSlope())))};
@@ -272,11 +291,36 @@ class Game{
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     draw.enemies(enemies);
     draw.projectiles(player.getProjectiles());
+    enemyProjectiles.clear();
+    for(int i=0; i<enemies.size(); i++){
+      if (enemies.get(i) instanceof ProjectileE){
+        for(int j=0; j< ((ProjectileE)(enemies.get(i))).getProjectiles().size(); j++){
+          boolean playerColl = false; 
+          ((ProjectileE)(enemies.get(i))).getProjectiles().get(j).move();
+          if ((((ProjectileE)(enemies.get(i))).getProjectiles().get(j).getTargetX()==((ProjectileE)(enemies.get(i))).getProjectiles().get(j).getX()) && (((ProjectileE)(enemies.get(i))).getProjectiles().get(j).getTargetY()==((ProjectileE)(enemies.get(i))).getProjectiles().get(j).getY())){
+            playerColl = true;
+          }
+          if (((ProjectileE)(enemies.get(i))).getProjectiles().get(j).getHitbox().intersects(player.getHitbox())){
+            playerColl = true;
+          }
+          if (((ProjectileE)(enemies.get(i))).getProjectiles().get(j).getLifeTime() > 50){
+            ((ProjectileE)(enemies.get(i))).getProjectiles().remove(j);
+          }
+          if (playerColl){
+            ((ProjectileE)(enemies.get(i))).getProjectiles().remove(j);
+            //playerColl = false;
+          }
+          enemyProjectiles.addAll(((ProjectileE)(enemies.get(i))).getProjectiles());
+        }//enemy projectiles
+      }
+    }
+    draw.enemyProjectiles(enemyProjectiles);
     draw.obstacles(obstacles);
     draw.background(background);
     draw.setCoord(new int[] {player.getX(), player.getY()});
     if (Math.random()<0.01){
-      enemies.add(new Enemy(5,40, (int)(Math.random()*400), (int)(Math.random()*400) + 200));
+      //enemies.add(new Enemy(5,40, (int)(Math.random()*400), (int)(Math.random()*400) + 200));
+      enemies.add(new ProjectileE(5,40, (int)(Math.random()*400), (int)(Math.random()*400) + 200));
     }
     if (draw != null)
       draw.repaint();

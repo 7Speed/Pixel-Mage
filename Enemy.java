@@ -148,7 +148,7 @@ class Enemy {
     y -= displaceModifier[1];
   }
   
-  public void move (int x, int y){
+  public void debuffs(){
     if (burnCount > 100){//Burn duration
       burn = false;
       burnCount = 0;
@@ -175,7 +175,7 @@ class Enemy {
       stunCount++;
     }
     
-    if (decoyCount > 100){//Burn duration
+    if (decoyCount > 100){
       decoy = false;
       decoyCount = 0;
     } else if (decoyCount != 0){
@@ -185,6 +185,9 @@ class Enemy {
     if ((burnCount%20 == 0)&&(burnCount!=0)){
       health -= 2;
     }
+  }
+  
+  public void move (int x, int y){
     if (slow){
       speed = speed/2.0;
     }

@@ -56,6 +56,12 @@ abstract class Projectile{
   public int getSpawnY(){
     return spawnY;
   }
+  public int getTargetX(){
+    return targetX;
+  }
+  public int getTargetY(){
+    return targetY;
+  }
   public int getLifeTime(){
     return lifeTime;
   }
