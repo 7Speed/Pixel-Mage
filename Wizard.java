@@ -1,11 +1,11 @@
 import java.util.ArrayList;
 
-class Archer extends Player{
+class Wizard extends Player{
   static int statsPlaceholder = 100;
-  Archer(int positionX, int positionY, int health, int mana, int element){
+  Wizard(int positionX, int positionY, int health, int mana, int element){
     super(positionX, positionY, health, mana, element, 10, 5);
   }
-  Archer(int positionX, int positionY, int health, int mana, int element, ArrayList<Projectile> projectiles){
+  Wizard(int positionX, int positionY, int health, int mana, int element, ArrayList<Projectile> projectiles){
     super(positionX, positionY, health, mana, element, 10, 5);
     setProjectiles(projectiles);
   }
