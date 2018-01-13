@@ -15,8 +15,10 @@ abstract class Player{
   private int reloadCap;
   private double dexBuff = 1;
   private double speedBuff = 1;
+  private double attBuff = 1;
   private int dexBuffCount = 0;
   private int speedBuffCount = 0;
+  private int attBuffCount = 0;
   Player(int positionX, int positionY, int health, int mana, int element, int reloadCap, int speed){
     this.positionX = positionX;
     this.positionY = positionY;
@@ -62,8 +64,14 @@ abstract class Player{
   }
   public void setDexBuff(double dexBuff){
     this.dexBuff = dexBuff;
-    if (speedBuff!=1){
+    if (dexBuff!=1){
       dexBuffCount = 1;
+    }
+  }
+  public void setAttBuff(double attBuff){
+    this.attBuff = attBuff;
+    if (attBuff!=1){
+      attBuffCount = 1;
     }
   }
   public void setSpeedBuffCount(int speedBuffCount){
@@ -72,13 +80,21 @@ abstract class Player{
   public void setDexBuffCount(int dexBuffCount){
     this.dexBuffCount = dexBuffCount;
   }
+  public void setAttBuffCount(int attBuffCount){
+    this.attBuffCount = attBuffCount;
+  }
   public int getSpeedBuffCount(){
     return speedBuffCount;
   }
   public int getDexBuffCount(){
     return dexBuffCount;
   }
-  
+  public int getAttBuffCount(){
+    return attBuffCount;
+  }
+  public double getAttBuff(){
+    return attBuff;
+  }
   
   public void move(int [] displaceModifier, ArrayList<Enemy> enemies, ArrayList<Wall> obstacles, Background background){
     for (int i = 0; i < enemies.size(); i++){

@@ -10,6 +10,7 @@ class Enemy {
   double speed = 2;
   private static int size = 80;
   private Rectangle hitbox;
+  private Rectangle aggrobox;
   private boolean burn = false;
   private boolean slow = false;
   private boolean freeze = false;
@@ -28,6 +29,7 @@ class Enemy {
     this.aggro = aggro;
     this.x = x;
     this.y = y;
+    aggrobox = new Rectangle(x-400,y-400,800+size,800+size);
     hitbox = new Rectangle(x, y, size, size);
   }
   
@@ -53,6 +55,18 @@ class Enemy {
   
   public int getHealth(){
     return health;
+  }
+  
+  public Rectangle getAggrobox(){
+    return aggrobox;
+  }
+  
+  public void setAggro(int aggro){
+    this.aggro = aggro;
+  }
+  
+  public int getAggro(){
+    return aggro;
   }
   
   public void damage(int damage){
@@ -145,6 +159,10 @@ class Enemy {
   
   public void updateHitbox(){
     hitbox.setLocation(this.x,this.y);
+  }
+  
+  public void updateAggrobox(){
+    aggrobox.setLocation(this.x-400,this.y-400);
   }
   
   public void displace(int [] displaceModifier){

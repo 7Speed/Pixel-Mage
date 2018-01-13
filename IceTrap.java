@@ -1,5 +1,8 @@
-class IceTrap extends Projectile{
+class IceTrap extends Trap{
   IceTrap(int centerX, int centerY){
-    super(centerX, centerY, 0, centerX, centerY, 2, 50, 50);
+    super(centerX, centerY);
+  }
+  public IceTrapExplosion explode(){
+    return new IceTrapExplosion(getSpawnX(), getSpawnY());
   }
 }
