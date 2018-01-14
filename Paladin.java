@@ -2,11 +2,11 @@ import java.util.ArrayList;
 
 class Paladin extends Player{
   static int statsPlaceholder = 100;
-  Paladin(int positionX, int positionY, int health, int mana, int element){
-    super(positionX, positionY, health, mana, element, 20, 3);
+  Paladin(int positionX, int positionY, int health, double mana, int element){
+    super(positionX, positionY, health, mana, element, 20, 3, 2);
   }
-  Paladin(int positionX, int positionY, int health, int mana, int element, ArrayList<Projectile> projectiles){
-    super(positionX, positionY, health, mana, element, 20, 3);
+  Paladin(int positionX, int positionY, int health, double mana, int element, ArrayList<Projectile> projectiles){
+    super(positionX, positionY, health, mana, element, 20, 3, 2);
     setProjectiles(projectiles);
   }
   public void fire(int spawnX, int spawnY, int targetX, int targetY, int element){
@@ -31,8 +31,8 @@ class Paladin extends Player{
       addProjectile(sword1);
       addProjectile(sword2);
     } else if (element == 3){
-      EarthArrow arrow = new EarthArrow(spawnX, spawnY, targetX, targetY);
-      addProjectile(arrow);
+      EarthSword sword = new EarthSword(spawnX, spawnY, targetX, targetY);
+      addProjectile(sword);
     } else if (element == 4){
       AirSword swordCenter = new AirSword(spawnX, spawnY, targetX, targetY);
       double slopeCenter = (spawnY-targetY)*1.0/(spawnX-targetX);
@@ -55,6 +55,21 @@ class Paladin extends Player{
       DarkSword swordBehind = new DarkSword(spawnX, spawnY, 2*spawnX-targetX, 2*spawnY-targetY);
       addProjectile(sword);
       addProjectile(swordBehind);
+    }
+  }
+  public int getManaCost(int element){
+    if (element == 1){
+      return 5;
+    } else if (element == 2){
+      return 2;
+    } else if (element == 3){
+      return 5;
+    } else if (element == 4){
+      return 5;
+    } else if (element == 5){
+      return 5;
+    } else {
+      return 0;
     }
   }
 }

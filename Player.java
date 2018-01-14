@@ -2,22 +2,27 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 abstract class Player{
   static int healthMax = 100;
-  static int manaMax = 100;
+  static double manaMax = 100;
   private int positionX;
   private int positionY;
   private int health;
-  private int mana;
+  private double mana;
+  private double wisdom;
   private int element;//0 is neutral, 1 is fire, 2 is water, 3 is earth, 4 is air, 5 is dark, 6 is light
   private int speed = 5;
   private static int size = 100;
   private Rectangle hitbox;
   private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
   private int reloadCap;
+  private int manaReloadCount = 0;
+  private static int manaReloadCap = 10;
   private double dexBuff = 1;
   private double speedBuff = 1;
+  private double attBuff = 1;
   private int dexBuffCount = 0;
   private int speedBuffCount = 0;
-  Player(int positionX, int positionY, int health, int mana, int element, int reloadCap, int speed){
+  private int attBuffCount = 0;
+  Player(int positionX, int positionY, int health, double mana, int element, int reloadCap, int speed, double wisdom){
     this.positionX = positionX;
     this.positionY = positionY;
     this.health = health;
@@ -25,6 +30,7 @@ abstract class Player{
     this.element = element;
     this.reloadCap = reloadCap;
     this.speed = speed;
+    this.wisdom = wisdom;
     hitbox = new Rectangle(positionX, positionY, size, size);
   }
   public void setProjectiles(ArrayList<Projectile> projectiles){
@@ -42,8 +48,38 @@ abstract class Player{
   public int getHealth(){
     return health;
   }
-  public int getMana(){
+  public static int getHealthMax(){
+    return healthMax;
+  }
+  public void damage(int increment){
+    health -= increment;
+  }
+  public double getMana(){
     return mana;
+  }
+  public static double getManaMax(){
+    return manaMax;
+  }
+  public void increaseMana(double increment){
+    this.mana += increment;
+  }
+  public void decreaseMana(double increment){
+    this.mana -= increment;
+  }
+  public double getWis(){
+    return wisdom;
+  }
+  public static int getManaReloadCap(){
+    return manaReloadCap;
+  }
+  public int getManaReloadCount(){
+    return manaReloadCount;
+  }
+  public void increaseManaReloadCount(){
+    manaReloadCount++;
+  }
+  public void resetManaReloadCount(){
+    manaReloadCount = 0;
   }
   public static int getSize(){
     return size;
@@ -62,8 +98,14 @@ abstract class Player{
   }
   public void setDexBuff(double dexBuff){
     this.dexBuff = dexBuff;
-    if (speedBuff!=1){
+    if (dexBuff!=1){
       dexBuffCount = 1;
+    }
+  }
+  public void setAttBuff(double attBuff){
+    this.attBuff = attBuff;
+    if (attBuff!=1){
+      attBuffCount = 1;
     }
   }
   public void setSpeedBuffCount(int speedBuffCount){
@@ -72,13 +114,21 @@ abstract class Player{
   public void setDexBuffCount(int dexBuffCount){
     this.dexBuffCount = dexBuffCount;
   }
+  public void setAttBuffCount(int attBuffCount){
+    this.attBuffCount = attBuffCount;
+  }
   public int getSpeedBuffCount(){
     return speedBuffCount;
   }
   public int getDexBuffCount(){
     return dexBuffCount;
   }
-  
+  public int getAttBuffCount(){
+    return attBuffCount;
+  }
+  public double getAttBuff(){
+    return attBuff;
+  }
   
   public void move(int [] displaceModifier, ArrayList<Enemy> enemies, ArrayList<Wall> obstacles, Background background){
     for (int i = 0; i < enemies.size(); i++){
@@ -154,4 +204,5 @@ abstract class Player{
   }
   
   public abstract void fire(int spawnX, int spawnY, int targetX, int targetY, int element);
+  public abstract int getManaCost(int element);
 }

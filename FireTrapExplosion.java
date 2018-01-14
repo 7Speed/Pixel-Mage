@@ -1,5 +1,5 @@
-class FireSpell extends Projectile{
-  FireSpell(int centerX, int centerY){
+class FireTrapExplosion extends Projectile{
+  FireTrapExplosion(int centerX, int centerY){
     super(centerX, centerY, 0, centerX, centerY, 2, 240, 240);
   }
   public void move(){

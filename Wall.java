@@ -11,6 +11,12 @@ class Wall{
   private int[] xpoints = new int[4];
   private int[] ypoints = new int[4];
   Wall(int spawnX, int spawnY, int targetX, int targetY){
+    if (spawnX == targetX){
+      targetX += 1;
+    }
+    if (spawnY == targetY){
+      targetY += 1;
+    }
     centerX = targetX;
     centerY = targetY;
     double arrowSlope = ((spawnY-targetY)*1.0)/(spawnX-targetX);

@@ -16,8 +16,10 @@ public class ProjectileE extends Enemy{
   }
   
   public void fire(int spawnX, int spawnY, int targetX, int targetY){
-    EnemyProjectile errow = new EnemyProjectile(spawnX, spawnY, targetX, targetY);
-    addProjectile(errow);
+    if (!getStun()){
+      EnemyProjectile errow = new EnemyProjectile(spawnX, spawnY, targetX, targetY);
+      addProjectile(errow);
+    }
   }
   
   public void addProjectile(Projectile projectile){
