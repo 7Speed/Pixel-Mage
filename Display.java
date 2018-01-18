@@ -297,7 +297,7 @@ public class Display extends JPanel implements KeyListener, MouseListener{
     setDoubleBuffered(true);// Make the panel no blink
     setFocusable(true);
     try {
-      title = resize(ImageIO.read(new File("titletemp.png")), (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth(), (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight());
+      title = resize(ImageIO.read(new File("title.png")), (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth(), (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight());
       instructions = resize(ImageIO.read(new File("Instructions.png")), (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth(), (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight());
       
       archer = resize(ImageIO.read(new File("Archer.png")), Player.getSize(), Player.getSize());// Set the image for
