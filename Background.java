@@ -1,6 +1,8 @@
 class Background{
   private int positionX;
   private int positionY;
+  private static int width = 4000;
+  private static int height = 4000;
   Background(int positionX, int positionY){
     this.positionX = positionX;
     this.positionY = positionY;
@@ -10,6 +12,12 @@ class Background{
   }
   public int getY(){
     return positionY;
+  }
+  public static int getWidth(){
+    return width;
+  }
+  public static int getHeight(){
+    return height;
   }
   public void displace(int direction, int speed){
     if (direction == 4){

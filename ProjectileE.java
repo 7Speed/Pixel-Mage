@@ -6,13 +6,15 @@ import java.util.ArrayList;
 
 public class ProjectileE extends Enemy{
   int reload;
-  int reloadCap = 100;//Moved to enemy class for easier customization of different enemy classes
+  int reloadCap;//Moved to enemy class for easier customization of different enemy classes
   int range = 200;//Moved to enemy class for easier customization of different enemy classes
   
   private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
   
-  public ProjectileE (int health, int aggro, int x, int y) { 
-    super(health, aggro, x, y);
+  public ProjectileE (int health, int aggro, int x, int y, int reloadCap, int range, double speed) { 
+    super(health, aggro, x, y, speed);
+    this.reloadCap = reloadCap;
+    this.range = range;
   }
   
   public void fire(int spawnX, int spawnY, int targetX, int targetY){

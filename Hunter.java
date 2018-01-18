@@ -3,10 +3,10 @@ import java.util.ArrayList;
 class Hunter extends Player{
   static int statsPlaceholder = 100;
   Hunter(int positionX, int positionY, int health, double mana, int element){
-    super(positionX, positionY, health, mana, element, 10, 5, 1);
+    super(positionX, positionY, health, mana, element, 10, 5, 1, 2);
   }
   Hunter(int positionX, int positionY, int health, double mana, int element, ArrayList<Projectile> projectiles){
-    super(positionX, positionY, health, mana, element, 10, 5, 1);
+    super(positionX, positionY, health, mana, element, 10, 5, 1, 2);
     setProjectiles(projectiles);
   }
   public void fire(int spawnX, int spawnY, int targetX, int targetY, int element){

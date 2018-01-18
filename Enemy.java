@@ -24,11 +24,12 @@ class Enemy {
   private int decoyX = 0;
   private int decoyY = 0;
   
-  public Enemy (int health, int aggro, int x, int y) { 
+  public Enemy (int health, int aggro, int x, int y, double speed) { 
     this.health = health;
     this.aggro = aggro;
     this.x = x;
     this.y = y;
+    this.speed = speed;
     aggrobox = new Rectangle(x-400,y-400,800+size,800+size);
     hitbox = new Rectangle(x, y, size, size);
   }
@@ -39,6 +40,14 @@ class Enemy {
   
   public int getY(){
     return y;
+  }
+  
+  public void setX(int x){
+    this.x = x;
+  }
+  
+  public void setY(int y){
+    this.y = y;
   }
   
   public static int getSize(){
@@ -230,8 +239,8 @@ class Enemy {
       } else {
         double addX;
         double addY;
-        int xDiff = x - this.x;
-        int yDiff = y - this.y;
+        int xDiff = x - this.x; //+ (int)(Math.random() * 3) - 1 - this.x;
+        int yDiff = y - this.y; //+ (int)(Math.random() * 3) - 1 - this.y;
         double travTime = Math.sqrt((xDiff*xDiff)+(yDiff*yDiff)) / speed;
         
         addX = xDiff/travTime;

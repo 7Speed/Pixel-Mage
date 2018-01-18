@@ -8,6 +8,7 @@ abstract class Player{
   private int health;
   private double mana;
   private double wisdom;
+  private int defense;
   private int element;//0 is neutral, 1 is fire, 2 is water, 3 is earth, 4 is air, 5 is dark, 6 is light
   private int speed = 5;
   private static int size = 100;
@@ -22,7 +23,7 @@ abstract class Player{
   private int dexBuffCount = 0;
   private int speedBuffCount = 0;
   private int attBuffCount = 0;
-  Player(int positionX, int positionY, int health, double mana, int element, int reloadCap, int speed, double wisdom){
+  Player(int positionX, int positionY, int health, double mana, int element, int reloadCap, int speed, double wisdom, int defense){
     this.positionX = positionX;
     this.positionY = positionY;
     this.health = health;
@@ -31,6 +32,7 @@ abstract class Player{
     this.reloadCap = reloadCap;
     this.speed = speed;
     this.wisdom = wisdom;
+    this.defense = defense;
     hitbox = new Rectangle(positionX, positionY, size, size);
   }
   public void setProjectiles(ArrayList<Projectile> projectiles){
@@ -52,7 +54,19 @@ abstract class Player{
     return healthMax;
   }
   public void damage(int increment){
-    health -= increment;
+    if (this instanceof Paladin){
+      if (increment-defense < increment*0.15){
+        health -= (int)Math.round(increment*0.15);
+      } else {
+        health -= increment-defense;
+      }
+    } else {
+      if (increment-defense < increment*0.2){
+        health -= (int)Math.round(increment*0.2);
+      } else {
+        health -= increment-defense;
+      }
+    }
   }
   public double getMana(){
     return mana;

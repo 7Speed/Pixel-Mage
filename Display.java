@@ -20,7 +20,7 @@ import javax.swing.JPanel;
 
 public class Display extends JPanel implements KeyListener, MouseListener{
   
-  private BufferedImage archer, paladin, rogue,fighter, wizard, hunter, enemy, projectile,fireBall, airBall, earthBall, waterBall, darkBall, background;
+  private BufferedImage archer, paladin, rogue,fighter, wizard, hunter, enemy, projectile,fireBall, airBall, earthBall, waterBall, darkBall, background, healthOrb, speedOrb, dexOrb, attOrb, sniper, boss, speedy, glassCannon;
   public static int middleX, middleY;
   private static int backgroundX=4000;
   private static int backgroundY=4000;
@@ -297,6 +297,11 @@ public class Display extends JPanel implements KeyListener, MouseListener{
       hunter = resize(ImageIO.read(new File("Archer.png")), Player.getSize(), Player.getSize());
       // the sprite
       enemy = resize(ImageIO.read(new File("Snake1.png")),Enemy.getSize(),Enemy.getSize());
+      sniper = resize(ImageIO.read(new File("Sniper.png")),Enemy.getSize(),Enemy.getSize());
+      boss = resize(ImageIO.read(new File("Boss.png")),Enemy.getSize(),Enemy.getSize());
+      speedy = resize(ImageIO.read(new File("Speedy.png")),Enemy.getSize(),Enemy.getSize());
+      glassCannon = resize(ImageIO.read(new File("GlassCannon.png")),Enemy.getSize(),Enemy.getSize());
+      
       projectile = resize(ImageIO.read(new File("projectile.png")),24,24);
       fireBall= resize(ImageIO.read(new File("fireball.png")),24,24);
       airBall=resize(ImageIO.read(new File("airball.png")),24,24);
@@ -304,6 +309,12 @@ public class Display extends JPanel implements KeyListener, MouseListener{
       waterBall=resize(ImageIO.read(new File("waterball.png")),24,24);
       darkBall=resize(ImageIO.read(new File("darkball.png")),24,24);
       background=resize(ImageIO.read(new File("Background.png")),backgroundX,backgroundY);
+      
+      healthOrb = resize(ImageIO.read(new File("HealthOrb.png")),40,40);
+      speedOrb = resize(ImageIO.read(new File("SpeedOrb.png")),40,40);
+      dexOrb = resize(ImageIO.read(new File("DexOrb.png")),40,40);
+      attOrb = resize(ImageIO.read(new File("AttOrb.png")),40,40);
+      
     } catch (IOException e) {
       e.printStackTrace();// If the image does not exist this will happen
     }
@@ -351,8 +362,18 @@ public class Display extends JPanel implements KeyListener, MouseListener{
     
     for (int i = 0; i < enemies.size(); i++){
       if ((enemies.get(i).getX() - enemies.get(i).getSize()/2 <= x + middleX && enemies.get(i).getX() + enemies.get(i).getSize()/2 >= x - middleX) && (enemies.get(i).getY() - enemies.get(i).getSize()/2 <= y + middleY && enemies.get(i).getY() + enemies.get(i).getSize()/2 >= y - middleY)) {
-        g.drawImage(enemy,(enemies.get(i)).getX(),(enemies.get(i)).getY(),this);
-        g.setColor(Color.RED);
+        if (enemies.get(i) instanceof SniperE){
+          g.drawImage(sniper,(enemies.get(i)).getX(),(enemies.get(i)).getY(),this);
+        } else if (enemies.get(i) instanceof BossE){
+          g.drawImage(boss,(enemies.get(i)).getX(),(enemies.get(i)).getY(),this);
+        } else if (enemies.get(i) instanceof SpeedyE){
+          g.drawImage(speedy,(enemies.get(i)).getX(),(enemies.get(i)).getY(),this);
+        } else if (enemies.get(i) instanceof GlassCannonE){
+          g.drawImage(glassCannon,(enemies.get(i)).getX(),(enemies.get(i)).getY(),this);
+        } else {
+          g.drawImage(enemy,(enemies.get(i)).getX(),(enemies.get(i)).getY(),this);
+        }
+        //g.setColor(Color.RED);
         //g.fillRect((int)enemies.get(i).getHitbox().getX(), (int)enemies.get(i).getHitbox().getY(), (int)enemies.get(i).getHitbox().getWidth(), (int)enemies.get(i).getHitbox().getHeight());
         if (enemies.get(i).getBurn()){
           g.setColor(Color.RED);
@@ -361,6 +382,10 @@ public class Display extends JPanel implements KeyListener, MouseListener{
         if (enemies.get(i).getSlow()){
           g.setColor(Color.BLUE);
           g.fillRect(enemies.get(i).getX()+10, enemies.get(i).getY()-10,8,8);
+        }
+        if (enemies.get(i).getStun()){
+          g.setColor(new Color(156, 93, 82));
+          g.fillRect(enemies.get(i).getX()+20, enemies.get(i).getY()-10,8,8);
         }
       }
     }
@@ -464,10 +489,19 @@ public class Display extends JPanel implements KeyListener, MouseListener{
       } else if (projectiles.get(i) instanceof DarkDecoy){
         g.setColor(Color.BLACK);
         g.fillRect((projectiles.get(i)).getX()-10,(projectiles.get(i)).getY()-10,20,20);
+      } else if (projectiles.get(i) instanceof AttOrb){
+        g.drawImage(attOrb,(projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2, this);
+      } else if (projectiles.get(i) instanceof SpeedOrb){
+        g.drawImage(speedOrb,(projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2, this);
+      } else if (projectiles.get(i) instanceof DexOrb){
+        g.drawImage(dexOrb,(projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2, this);
+      } else if (projectiles.get(i) instanceof HealthOrb){
+        g.drawImage(healthOrb,(projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2, this);
       }
     }
     for (int i = 0; i < enemyProjectiles.size(); i++){
-      g.fillRect((enemyProjectiles.get(i)).getX(),(enemyProjectiles.get(i)).getY(),10,10);
+      g.setColor(Color.RED);
+      g.fillRect((enemyProjectiles.get(i)).getX()-enemyProjectiles.get(i).getWidth()/2,(enemyProjectiles.get(i)).getY()-enemyProjectiles.get(i).getHeight()/2, enemyProjectiles.get(i).getWidth(), enemyProjectiles.get(i).getHeight());
     }
   }
   

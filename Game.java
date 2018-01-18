@@ -14,6 +14,8 @@ class Game{
   //enemies.add(enemy1);
   //enemies.add(new Enemy(75,40,300,300));
   Display draw;
+  double difficulty;
+  int score;
   
   public Game(){
     player = new Archer((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2-player.getSize()/2,(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()/2-player.getSize()/2,100,100,0);
@@ -22,6 +24,8 @@ class Game{
     enemyProjectiles = new ArrayList<Projectile>();
     background = new Background(-Display.getBackgroundX()/2,-Display.getBackgroundY()/2);
     reloadCount = 0;
+    difficulty = 0;
+    score = 0;
     GameUpdate gu = new GameUpdate(this);
     Thread t = new Thread(gu);
     t.start();
@@ -55,6 +59,20 @@ class Game{
       player = new Hunter(player.getX(), player.getY(), player.getHealth(), player.getMana(), player.getElement(), player.getProjectiles());
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    if (player.getX() < background.getX()){
+      int [] displaceModifier = {background.getX()-player.getX(), 0};
+      player.move(displaceModifier, enemies, obstacles, background);
+    } else if (player.getX()+player.getSize() > background.getX() + background.getWidth()){
+      int [] displaceModifier = {background.getX()+background.getWidth()-(player.getX()+player.getSize()), 0};
+      player.move(displaceModifier, enemies, obstacles, background);
+    }
+    if (player.getY() < background.getY()){
+      int [] displaceModifier = {0, background.getY()-player.getY()};
+      player.move(displaceModifier, enemies, obstacles, background);
+    } else if (player.getY()+player.getSize() > background.getY() + background.getHeight()){
+      int [] displaceModifier = {0, background.getY()+background.getHeight()-(player.getY()+player.getSize())};
+      player.move(displaceModifier, enemies, obstacles, background);
+    }
     if (draw.getWPressed() && draw.getDPressed()){//keypress w and d
       player.move(1,player.getSpeed(),enemies,obstacles,background);
     } else if (draw.getWPressed() && draw.getAPressed()){//keypress wa
@@ -75,6 +93,9 @@ class Game{
     player.setElement(draw.getNumPressed());
     if (reloadCount < player.getReloadCap()){
       reloadCount++;
+    }
+    if (player.getHealth() > player.getHealthMax()){
+      player.damage(player.getHealth() - player.getHealthMax());
     }
     if (draw.getLeftClick() && (reloadCount >= player.getReloadCap())){
       //System.out.println(player.getElement());
@@ -254,6 +275,16 @@ class Game{
     int centeredX = Enemy.getSize()/2 - Player.getSize()/2;
     int centeredY = Enemy.getSize()/2 - Player.getSize()/2;
     for (int i = 0; i < enemies.size(); i++){
+      if (enemies.get(i).getX() < background.getX()){
+        enemies.get(i).setX(background.getX());
+      } else if (enemies.get(i).getX()+enemies.get(i).getSize() > background.getX() + background.getWidth()){
+        enemies.get(i).setX(background.getX() + background.getWidth() - enemies.get(i).getSize());
+      }
+      if (enemies.get(i).getY() < background.getY()){
+        enemies.get(i).setY(background.getY());
+      } else if (enemies.get(i).getY()+enemies.get(i).getSize() > background.getY() + background.getHeight()){
+        enemies.get(i).setY(background.getY() + background.getHeight()  - enemies.get(i).getSize());
+      }
       if(enemies.get(i).getAggrobox().intersects(player.getHitbox())){
         enemies.get(i).setAggro(1);
       }
@@ -280,6 +311,20 @@ class Game{
         }
       }
       if (enemies.get(i).getHealth() <= 0){
+        score += 100;
+        int boostID = 0;
+        if (Math.random() < 0.1){
+          boostID = (int)(Math.random() * 4);
+          if (boostID==0){
+            player.getProjectiles().add(new AttOrb(enemies.get(i).getX(), enemies.get(i).getY()));
+          } else if (boostID==1){
+            player.getProjectiles().add(new DexOrb(enemies.get(i).getX(), enemies.get(i).getY()));
+          } else if (boostID==2){
+            player.getProjectiles().add(new SpeedOrb(enemies.get(i).getX(), enemies.get(i).getY()));
+          } else if (boostID==3){
+            player.getProjectiles().add(new HealthOrb(enemies.get(i).getX(), enemies.get(i).getY()));
+          }
+        }
         enemies.remove(i);
       }
     }
@@ -382,6 +427,19 @@ class Game{
           collision = true;
         }
       }
+      if (player.getProjectiles().get(i) instanceof Orb && (player.getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))){
+        if (player.getProjectiles().get(i) instanceof DexOrb){
+          player.setDexBuff(2);
+        } else if (player.getProjectiles().get(i) instanceof AttOrb){
+          player.setAttBuff(2);
+        } else if (player.getProjectiles().get(i) instanceof HealthOrb){
+          player.damage(-100);
+        } else if (player.getProjectiles().get(i) instanceof SpeedOrb){
+          player.setSpeedBuff(1.5);
+        }
+        removeProjectile = true;
+      }
+        
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
       player.getProjectiles().get(i).move();
       if (player.getProjectiles().get(i) instanceof AirArrow){
@@ -434,7 +492,7 @@ class Game{
         }
         removeProjectile = true;
       }
-      if ((player.getProjectiles().get(i).getLifeTime() > 1000)&&(player.getProjectiles().get(i) instanceof Trap)){
+      if ((player.getProjectiles().get(i).getLifeTime() > 1000)&&((player.getProjectiles().get(i) instanceof Trap)||(player.getProjectiles().get(i) instanceof Orb))){
         removeProjectile = true;
       }
       if (collision && ((player.getProjectiles().get(i) instanceof Arrow)||(player.getProjectiles().get(i) instanceof Sword)||(player.getProjectiles().get(i) instanceof Dagger)||(player.getProjectiles().get(i) instanceof Fist)||(player.getProjectiles().get(i) instanceof Bolt)||(player.getProjectiles().get(i) instanceof Trap))){
@@ -492,7 +550,7 @@ class Game{
           removeProjectile = true;
         }
       }
-      if (removeProjectile){
+      if ((removeProjectile)||!(new Rectangle(background.getX(), background.getY(), background.getWidth(), background.getHeight())).contains(player.getProjectiles().get(i).getHitbox())){
         player.getProjectiles().remove(i);
       }
     }
@@ -500,9 +558,7 @@ class Game{
       player.getProjectiles().remove(paladinSlow);
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    draw.enemies(enemies);
     draw.projectiles(player.getProjectiles());
-    draw.setHealth(player.getHealth());
     draw.setMana(player.getMana());
     enemyProjectiles.clear();
     for(int i=0; i<enemies.size(); i++){
@@ -520,7 +576,7 @@ class Game{
           if (((ProjectileE)(enemies.get(i))).getProjectiles().get(j).getLifeTime() > 50){
             playerColl = true;
           }
-          if (playerColl){
+          if ((playerColl)||!(new Rectangle(background.getX(), background.getY(), background.getWidth(), background.getHeight())).contains(player.getProjectiles().get(i).getHitbox())){
             ((ProjectileE)(enemies.get(i))).getProjectiles().remove(j);
             //playerColl = false;
           }
@@ -528,14 +584,29 @@ class Game{
         }//enemy projectiles
       }
     }
+    draw.setHealth(player.getHealth());
     draw.enemyProjectiles(enemyProjectiles);
     draw.obstacles(obstacles);
     draw.background(background);
     draw.setCoord(new int[] {player.getX(), player.getY()});
-    if (Math.random()<0.01){
+    if (Math.random()<0.01+difficulty){
       //enemies.add(new Enemy(5,40, (int)(Math.random()*400), (int)(Math.random()*400) + 200));
-      enemies.add(new ProjectileE(10,0, (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getWidth()), (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getHeight())));
+      enemies.add(new ProjectileE(10,0, (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getWidth()), (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getHeight()), 100,200, 2));
     }
+    if (Math.random()<0.001+difficulty){
+      enemies.add(new SniperE(10,0, (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getWidth()), (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getHeight()),400,800,2));
+    }
+    if (Math.random()<0.001+difficulty){
+      enemies.add(new SpeedyE(5,0, (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getWidth()), (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getHeight()),50,100,3));
+    }
+    if (Math.random()<0.001+difficulty){
+      enemies.add(new GlassCannonE(1,0, (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getWidth()), (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getHeight()),100,100,2));
+    }
+    if (Math.random()<0.0005+difficulty){
+      enemies.add(new BossE(50,0, (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getWidth()), (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getHeight()),400,200,1));
+    }
+    difficulty+=1.0/10000000.0;
+    draw.enemies(enemies);
     if (draw != null)
       draw.repaint();
   }
