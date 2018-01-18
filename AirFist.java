@@ -1,3 +1,8 @@
+/* AirFist.java
+ * Last edited January 17, 2018
+ * This class represents the fist that is launched of element air
+ * @author Kamron Zaidi
+ */
 class AirFist extends Fist{
   private int secondLifeTime = 0;
   AirFist(int spawnX, int spawnY, int targetX, int targetY){

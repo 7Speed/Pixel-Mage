@@ -47,7 +47,7 @@ public class PixelMage {
     frame = new JFrame();
     frame.setBounds(0, 0, (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth(), (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight());
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    Display d = new Display(game);
+    Display d = new Display();
     game.setDisplay(d);
     frame.getContentPane().add(d, BorderLayout.CENTER);
     d.setVisible(true);

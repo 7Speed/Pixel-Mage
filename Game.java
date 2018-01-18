@@ -1,6 +1,6 @@
-import java.awt.event.*;
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Toolkit;
+import java.awt.MouseInfo;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
 class Game{
@@ -11,6 +11,7 @@ class Game{
   ArrayList<Projectile> enemyProjectiles;
   Background background;
   int reloadCount;
+  int pageId;
   //enemies.add(enemy1);
   //enemies.add(new Enemy(75,40,300,300));
   Display draw;
@@ -26,9 +27,13 @@ class Game{
     reloadCount = 0;
     difficulty = 0;
     score = 0;
+    pageId = 0;
     GameUpdate gu = new GameUpdate(this);
     Thread t = new Thread(gu);
     t.start();
+  }
+  public int getPageId(){
+    return pageId;
   }
   public void update(){
     /*
@@ -44,571 +49,633 @@ class Game{
     if(draw==null){
       return;
     }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    if ((draw.getClassNum() == 0) && !(player instanceof Archer)){
-      player = new Archer(player.getX(), player.getY(), player.getHealth(), player.getMana(), player.getElement(), player.getProjectiles());
-    } else if ((draw.getClassNum() == 1) && !(player instanceof Paladin)){
-      player = new Paladin(player.getX(), player.getY(), player.getHealth(), player.getMana(), player.getElement(), player.getProjectiles());
-    } else if ((draw.getClassNum() == 2) && !(player instanceof Rogue)){
-      player = new Rogue(player.getX(), player.getY(), player.getHealth(), player.getMana(), player.getElement(), player.getProjectiles());
-    } else if ((draw.getClassNum() == 3) && !(player instanceof Fighter)){
-      player = new Fighter(player.getX(), player.getY(), player.getHealth(), player.getMana(), player.getElement(), player.getProjectiles());
-    } else if ((draw.getClassNum() == 4) && !(player instanceof Wizard)){
-      player = new Wizard(player.getX(), player.getY(), player.getHealth(), player.getMana(), player.getElement(), player.getProjectiles());
-    } else if ((draw.getClassNum() == 5) && !(player instanceof Hunter)){
-      player = new Hunter(player.getX(), player.getY(), player.getHealth(), player.getMana(), player.getElement(), player.getProjectiles());
-    }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    if (player.getX() < background.getX()){
-      int [] displaceModifier = {background.getX()-player.getX(), 0};
-      player.move(displaceModifier, enemies, obstacles, background);
-    } else if (player.getX()+player.getSize() > background.getX() + background.getWidth()){
-      int [] displaceModifier = {background.getX()+background.getWidth()-(player.getX()+player.getSize()), 0};
-      player.move(displaceModifier, enemies, obstacles, background);
-    }
-    if (player.getY() < background.getY()){
-      int [] displaceModifier = {0, background.getY()-player.getY()};
-      player.move(displaceModifier, enemies, obstacles, background);
-    } else if (player.getY()+player.getSize() > background.getY() + background.getHeight()){
-      int [] displaceModifier = {0, background.getY()+background.getHeight()-(player.getY()+player.getSize())};
-      player.move(displaceModifier, enemies, obstacles, background);
-    }
-    if (draw.getWPressed() && draw.getDPressed()){//keypress w and d
-      player.move(1,player.getSpeed(),enemies,obstacles,background);
-    } else if (draw.getWPressed() && draw.getAPressed()){//keypress wa
-      player.move(3,player.getSpeed(),enemies,obstacles,background);
-    } else if (draw.getAPressed() && draw.getSPressed()){//keypress as
-      player.move(5,player.getSpeed(),enemies,obstacles,background);
-    } else if (draw.getSPressed() && draw.getDPressed()){//keypress sd
-      player.move(7,player.getSpeed(),enemies,obstacles,background);
-    } else if (draw.getDPressed()){//keypress d
-      player.move(0,player.getSpeed(),enemies,obstacles,background);
-    } else if (draw.getWPressed()){//keypress w
-      player.move(2,player.getSpeed(),enemies,obstacles,background);
-    } else if (draw.getAPressed()){//keypress a
-      player.move(4,player.getSpeed(),enemies,obstacles,background);
-    } else if (draw.getSPressed()){//keypress s
-      player.move(6,player.getSpeed(),enemies,obstacles,background);
-    }
-    player.setElement(draw.getNumPressed());
-    if (reloadCount < player.getReloadCap()){
-      reloadCount++;
-    }
-    if (player.getHealth() > player.getHealthMax()){
-      player.damage(player.getHealth() - player.getHealthMax());
-    }
-    if (draw.getLeftClick() && (reloadCount >= player.getReloadCap())){
-      //System.out.println(player.getElement());
-      if (player.getManaCost(player.getElement()) <= player.getMana()){
-        player.fire(player.getX() + Player.getSize()/2, player.getY() + Player.getSize()/2, (int)MouseInfo.getPointerInfo().getLocation().getX(), (int)MouseInfo.getPointerInfo().getLocation().getY()-25, player.getElement());
-        player.decreaseMana(player.getManaCost(player.getElement()));
-        reloadCount = 0;
+    if (pageId == 0){
+      draw.setId(0);
+      if (draw.getLeftClick() && (-6*((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth())/40+(int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2<(int)MouseInfo.getPointerInfo().getLocation().getX()) 
+            && (6*((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth())/40+(int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2>(int)MouseInfo.getPointerInfo().getLocation().getX())
+            && (5*((int)Toolkit.getDefaultToolkit().getScreenSize().getHeight())/30+(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()/2<(int)MouseInfo.getPointerInfo().getLocation().getY())
+            && (11*((int)Toolkit.getDefaultToolkit().getScreenSize().getHeight())/30+(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()/2>(int)MouseInfo.getPointerInfo().getLocation().getY())){
+        pageId=1;
+        draw.fired();
       }
-    }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    if (player.getMana() + player.getWis() < Player.getManaMax()){
-      if (player.getManaReloadCount() >= Player.getManaReloadCap()){
-        player.increaseMana(player.getWis());
-        player.resetManaReloadCount();
-      } else {
-        player.increaseManaReloadCount();
+      if (draw.getLeftClick() && (-7*((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth())/40+(int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2>(int)MouseInfo.getPointerInfo().getLocation().getX()) 
+            && (-19*((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth())/40+(int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2<(int)MouseInfo.getPointerInfo().getLocation().getX())
+            && (5*((int)Toolkit.getDefaultToolkit().getScreenSize().getHeight())/30+(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()/2<(int)MouseInfo.getPointerInfo().getLocation().getY())
+            && (11*((int)Toolkit.getDefaultToolkit().getScreenSize().getHeight())/30+(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()/2>(int)MouseInfo.getPointerInfo().getLocation().getY())){
+        pageId=4;
+        draw.fired();
       }
-    } else if (player.getMana() != Player.getManaMax()){
-      player.increaseMana(Player.getManaMax()-player.getMana());
-    }
-    if (player.getSpeedBuffCount() > 100){//Buff duration
-      player.setSpeedBuff(1);
-      player.setSpeedBuffCount(0);
-    } else if (player.getSpeedBuffCount() != 0){
-      player.setSpeedBuffCount(player.getSpeedBuffCount() + 1);
-    }
-    if (player.getDexBuffCount() > 100){//Buff duration
-      player.setDexBuff(1);
-      player.setDexBuffCount(0);
-    } else if (player.getDexBuffCount() != 0){
-      player.setDexBuffCount(player.getDexBuffCount() + 1);
-    }
-    if (player.getAttBuffCount() > 100){//Buff duration
-      player.setAttBuff(1);
-      player.setAttBuffCount(0);
-    } else if (player.getAttBuffCount() != 0){
-      player.setAttBuffCount(player.getAttBuffCount() + 1);
-    }
-    IceAura paladinSlow = null;
-    if ((player instanceof Paladin) && (draw.getTwoPressed())){
-      if (player.getManaCost(2) <= player.getMana()){
-        paladinSlow = new IceAura(player.getX(), player.getY());
-        player.decreaseMana(player.getManaCost(2));
-        player.getProjectiles().add(paladinSlow);
+      if (draw.getLeftClick() && (7*((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth())/40+(int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2<(int)MouseInfo.getPointerInfo().getLocation().getX()) 
+            && (19*((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth())/40+(int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2>(int)MouseInfo.getPointerInfo().getLocation().getX())
+            && (5*((int)Toolkit.getDefaultToolkit().getScreenSize().getHeight())/30+(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()/2<(int)MouseInfo.getPointerInfo().getLocation().getY())
+            && (11*((int)Toolkit.getDefaultToolkit().getScreenSize().getHeight())/30+(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()/2>(int)MouseInfo.getPointerInfo().getLocation().getY())){
+        pageId=3;
+        draw.fired();
       }
+      draw.repaint();
     }
-    if ((player instanceof Rogue) && (draw.getTwoPressed())){
-      if (player.getManaCost(2) <= player.getMana()){
-        player.getProjectiles().add(new WaterDash(player.getX(), player.getY(), (int)MouseInfo.getPointerInfo().getLocation().getX(), (int)MouseInfo.getPointerInfo().getLocation().getY()-25));
-        player.decreaseMana(player.getManaCost(2));
+    if (pageId == 1){
+      draw.setId(1);
+      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      if (player.getHealth() <= 0){
+        pageId++;
       }
-      draw.setTwoPressed(false);
-    }
-    if ((player instanceof Rogue) && (draw.getThreePressed())){
-      if (player.getManaCost(3) <= player.getMana()){
-        player.getProjectiles().add(new EarthStun(player.getX(), player.getY()));
-        player.decreaseMana(player.getManaCost(3));
+      if ((draw.getClassNum() == 0) && !(player instanceof Archer)){
+        player = new Archer(player.getX(), player.getY(), player.getHealth(), player.getMana(), player.getElement(), player.getProjectiles());
+      } else if ((draw.getClassNum() == 1) && !(player instanceof Paladin)){
+        player = new Paladin(player.getX(), player.getY(), player.getHealth(), player.getMana(), player.getElement(), player.getProjectiles());
+      } else if ((draw.getClassNum() == 2) && !(player instanceof Rogue)){
+        player = new Rogue(player.getX(), player.getY(), player.getHealth(), player.getMana(), player.getElement(), player.getProjectiles());
+      } else if ((draw.getClassNum() == 3) && !(player instanceof Fighter)){
+        player = new Fighter(player.getX(), player.getY(), player.getHealth(), player.getMana(), player.getElement(), player.getProjectiles());
+      } else if ((draw.getClassNum() == 4) && !(player instanceof Wizard)){
+        player = new Wizard(player.getX(), player.getY(), player.getHealth(), player.getMana(), player.getElement(), player.getProjectiles());
+      } else if ((draw.getClassNum() == 5) && !(player instanceof Hunter)){
+        player = new Hunter(player.getX(), player.getY(), player.getHealth(), player.getMana(), player.getElement(), player.getProjectiles());
       }
-      draw.setThreePressed(false);
-    }
-    if ((player instanceof Rogue) && (draw.getFourPressed())){
-      if (player.getManaCost(4) <= player.getMana()){
-        player.setSpeedBuff(2);
-        player.setDexBuff(2);
-        player.decreaseMana(player.getManaCost(4));
-      }
-      draw.setFourPressed(false);
-    }
-    if ((player instanceof Rogue) && (draw.getFivePressed())){
-      if (player.getManaCost(5) <= player.getMana()){
-        player.getProjectiles().add(new DarkDecoy(player.getX(), player.getY()));
-        player.decreaseMana(player.getManaCost(5));
-      }
-      draw.setFivePressed(false);
-    }
-    if ((player instanceof Fighter) && (draw.getOnePressed())){
-      if (player.getManaCost(1) <= player.getMana()){
-        player.getProjectiles().add(new FireFist(player.getX() + Player.getSize()/2, player.getY() + Player.getSize()/2, (int)MouseInfo.getPointerInfo().getLocation().getX(), (int)MouseInfo.getPointerInfo().getLocation().getY()-25));
-        player.decreaseMana(player.getManaCost(1));
-      }
-      draw.setOnePressed(false);
-    }
-    if ((player instanceof Fighter) && (draw.getThreePressed())){
-      if (player.getManaCost(3) <= player.getMana()){
-        player.setSpeedBuff(0.5);
-        player.setAttBuff(2);
-        player.decreaseMana(player.getManaCost(3));
-      }
-      draw.setThreePressed(false);
-    }
-    if ((player instanceof Fighter) && (draw.getFivePressed())){
-      if (player.getManaCost(5) <= player.getMana()){
-        player.getProjectiles().add(new DarkDash(player.getX(), player.getY(), (int)MouseInfo.getPointerInfo().getLocation().getX(), (int)MouseInfo.getPointerInfo().getLocation().getY()-25));
-        player.decreaseMana(player.getManaCost(5));
-      }
-      draw.setFivePressed(false);
-    }
-    if ((player instanceof Wizard) && (draw.getOnePressed())){
-      if (player.getManaCost(1) <= player.getMana()){
-        player.getProjectiles().add(new FireSpell((int)MouseInfo.getPointerInfo().getLocation().getX(), (int)MouseInfo.getPointerInfo().getLocation().getY()-25));
-        player.decreaseMana(player.getManaCost(1));
-      }
-      draw.setOnePressed(false);
-    }
-    if ((player instanceof Wizard) && (draw.getTwoPressed())){
-      if (player.getManaCost(2) <= player.getMana()){
-        player.getProjectiles().add(new IceSpell((int)MouseInfo.getPointerInfo().getLocation().getX(), (int)MouseInfo.getPointerInfo().getLocation().getY()-25));
-        player.decreaseMana(player.getManaCost(2));
-      }
-      draw.setTwoPressed(false);
-    }
-    if ((player instanceof Wizard) && (draw.getThreePressed())){
-      if (player.getManaCost(3) <= player.getMana()){
-        obstacles.add(new Wall(player.getX()+Player.getSize()/2, player.getY()+Player.getSize()/2, (int)MouseInfo.getPointerInfo().getLocation().getX(), (int)MouseInfo.getPointerInfo().getLocation().getY()-25));
-        player.decreaseMana(player.getManaCost(3));
-      }
-      draw.setThreePressed(false);
-    }
-    if ((player instanceof Wizard) && (draw.getFourPressed())){
-      if (player.getManaCost(4) <= player.getMana()){
-        player.getProjectiles().add(new AirSpell(player.getX()+Player.getSize()/2, player.getY()+Player.getSize()/2, (int)MouseInfo.getPointerInfo().getLocation().getX(), (int)MouseInfo.getPointerInfo().getLocation().getY()-25));
-        player.decreaseMana(player.getManaCost(4));
-      }
-      draw.setFourPressed(false);
-    }
-    if ((player instanceof Wizard) && (draw.getFivePressed())){
-      if (player.getManaCost(5) <= player.getMana()){
-        int [] displaceModifier = {(int)MouseInfo.getPointerInfo().getLocation().getX()-player.getX()-Player.getSize()/2, (int)MouseInfo.getPointerInfo().getLocation().getY()-player.getY()-Player.getSize()/2-25};
+      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      if (player.getX() < background.getX()){
+        int [] displaceModifier = {background.getX()-player.getX(), 0};
         player.move(displaceModifier, enemies, obstacles, background);
-        player.decreaseMana(player.getManaCost(5));
+      } else if (player.getX()+player.getSize() > background.getX() + background.getWidth()){
+        int [] displaceModifier = {background.getX()+background.getWidth()-(player.getX()+player.getSize()), 0};
+        player.move(displaceModifier, enemies, obstacles, background);
       }
-      draw.setFivePressed(false);
-    }
-    if ((player instanceof Hunter) && (draw.getOnePressed())){
-      if (player.getManaCost(1) <= player.getMana()){
-        player.getProjectiles().add(new FireTrap(player.getX() + Player.getSize()/2, player.getY() + Player.getSize()/2));
-        player.decreaseMana(player.getManaCost(1));
+      if (player.getY() < background.getY()){
+        int [] displaceModifier = {0, background.getY()-player.getY()};
+        player.move(displaceModifier, enemies, obstacles, background);
+      } else if (player.getY()+player.getSize() > background.getY() + background.getHeight()){
+        int [] displaceModifier = {0, background.getY()+background.getHeight()-(player.getY()+player.getSize())};
+        player.move(displaceModifier, enemies, obstacles, background);
       }
-      draw.setOnePressed(false);
-    }
-    if ((player instanceof Hunter) && (draw.getTwoPressed())){
-      if (player.getManaCost(2) <= player.getMana()){
-        player.getProjectiles().add(new IceTrap(player.getX() + Player.getSize()/2, player.getY() + Player.getSize()/2));
-        player.decreaseMana(player.getManaCost(2));
+      if (draw.getWPressed() && draw.getDPressed()){//keypress w and d
+        player.move(1,player.getSpeed(),enemies,obstacles,background);
+      } else if (draw.getWPressed() && draw.getAPressed()){//keypress wa
+        player.move(3,player.getSpeed(),enemies,obstacles,background);
+      } else if (draw.getAPressed() && draw.getSPressed()){//keypress as
+        player.move(5,player.getSpeed(),enemies,obstacles,background);
+      } else if (draw.getSPressed() && draw.getDPressed()){//keypress sd
+        player.move(7,player.getSpeed(),enemies,obstacles,background);
+      } else if (draw.getDPressed()){//keypress d
+        player.move(0,player.getSpeed(),enemies,obstacles,background);
+      } else if (draw.getWPressed()){//keypress w
+        player.move(2,player.getSpeed(),enemies,obstacles,background);
+      } else if (draw.getAPressed()){//keypress a
+        player.move(4,player.getSpeed(),enemies,obstacles,background);
+      } else if (draw.getSPressed()){//keypress s
+        player.move(6,player.getSpeed(),enemies,obstacles,background);
       }
-      draw.setTwoPressed(false);
-    }
-    if ((player instanceof Hunter) && (draw.getThreePressed())){
-      if (player.getManaCost(3) <= player.getMana()){
-        player.getProjectiles().add(new EarthTrap(player.getX() + Player.getSize()/2, player.getY() + Player.getSize()/2));
-        player.decreaseMana(player.getManaCost(3));
+      player.setElement(draw.getNumPressed());
+      if (reloadCount < player.getReloadCap()){
+        reloadCount++;
       }
-      draw.setThreePressed(false);
-    }
-    if ((player instanceof Hunter) && (draw.getFourPressed())){
-      if (player.getManaCost(4) <= player.getMana()){
-        player.getProjectiles().add(new AirTrap(player.getX() + Player.getSize()/2, player.getY() + Player.getSize()/2));
-        player.decreaseMana(player.getManaCost(4));
+      if (player.getHealth() > player.getHealthMax()){
+        player.damage(player.getHealth() - player.getHealthMax());
       }
-      draw.setFourPressed(false);
-    }
-    if ((player instanceof Hunter) && (draw.getFivePressed())){
-      if (player.getManaCost(5) <= player.getMana()){
-        ArrayList<Projectile> trapExplosions = new ArrayList<Projectile>();
-        for (int i = 0; i < player.getProjectiles().size(); i++){
-          if (player.getProjectiles().get(i) instanceof Trap){
-            trapExplosions.add(((Trap)(player.getProjectiles().get(i))).explode());
+      if (draw.getLeftClick() && (reloadCount >= player.getReloadCap())){
+        //System.out.println(player.getElement());
+        if (player.getManaCost(player.getElement()) <= player.getMana()){
+          player.fire(player.getX() + Player.getSize()/2, player.getY() + Player.getSize()/2, (int)MouseInfo.getPointerInfo().getLocation().getX(), (int)MouseInfo.getPointerInfo().getLocation().getY()-25, player.getElement());
+          player.decreaseMana(player.getManaCost(player.getElement()));
+          reloadCount = 0;
+        }
+      }
+      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      if (player.getMana() + player.getWis() < Player.getManaMax()){
+        if (player.getManaReloadCount() >= Player.getManaReloadCap()){
+          player.increaseMana(player.getWis());
+          player.resetManaReloadCount();
+        } else {
+          player.increaseManaReloadCount();
+        }
+      } else if (player.getMana() != Player.getManaMax()){
+        player.increaseMana(Player.getManaMax()-player.getMana());
+      }
+      if (player.getSpeedBuffCount() > 100){//Buff duration
+        player.setSpeedBuff(1);
+        player.setSpeedBuffCount(0);
+      } else if (player.getSpeedBuffCount() != 0){
+        player.setSpeedBuffCount(player.getSpeedBuffCount() + 1);
+      }
+      if (player.getDexBuffCount() > 100){//Buff duration
+        player.setDexBuff(1);
+        player.setDexBuffCount(0);
+      } else if (player.getDexBuffCount() != 0){
+        player.setDexBuffCount(player.getDexBuffCount() + 1);
+      }
+      if (player.getAttBuffCount() > 100){//Buff duration
+        player.setAttBuff(1);
+        player.setAttBuffCount(0);
+      } else if (player.getAttBuffCount() != 0){
+        player.setAttBuffCount(player.getAttBuffCount() + 1);
+      }
+      IceAura paladinSlow = null;
+      if ((player instanceof Paladin) && (draw.getTwoPressed())){
+        if (player.getManaCost(2) <= player.getMana()){
+          paladinSlow = new IceAura(player.getX(), player.getY());
+          player.decreaseMana(player.getManaCost(2));
+          player.getProjectiles().add(paladinSlow);
+        }
+      }
+      if ((player instanceof Rogue) && (draw.getTwoPressed())){
+        if (player.getManaCost(2) <= player.getMana()){
+          player.getProjectiles().add(new WaterDash(player.getX(), player.getY(), (int)MouseInfo.getPointerInfo().getLocation().getX(), (int)MouseInfo.getPointerInfo().getLocation().getY()-25));
+          player.decreaseMana(player.getManaCost(2));
+        }
+        draw.setTwoPressed(false);
+      }
+      if ((player instanceof Rogue) && (draw.getThreePressed())){
+        if (player.getManaCost(3) <= player.getMana()){
+          player.getProjectiles().add(new EarthStun(player.getX(), player.getY()));
+          player.decreaseMana(player.getManaCost(3));
+        }
+        draw.setThreePressed(false);
+      }
+      if ((player instanceof Rogue) && (draw.getFourPressed())){
+        if (player.getManaCost(4) <= player.getMana()){
+          player.setSpeedBuff(2);
+          player.setDexBuff(2);
+          player.decreaseMana(player.getManaCost(4));
+        }
+        draw.setFourPressed(false);
+      }
+      if ((player instanceof Rogue) && (draw.getFivePressed())){
+        if (player.getManaCost(5) <= player.getMana()){
+          player.getProjectiles().add(new DarkDecoy(player.getX(), player.getY()));
+          player.decreaseMana(player.getManaCost(5));
+        }
+        draw.setFivePressed(false);
+      }
+      if ((player instanceof Fighter) && (draw.getOnePressed())){
+        if (player.getManaCost(1) <= player.getMana()){
+          player.getProjectiles().add(new FireFist(player.getX() + Player.getSize()/2, player.getY() + Player.getSize()/2, (int)MouseInfo.getPointerInfo().getLocation().getX(), (int)MouseInfo.getPointerInfo().getLocation().getY()-25));
+          player.decreaseMana(player.getManaCost(1));
+        }
+        draw.setOnePressed(false);
+      }
+      if ((player instanceof Fighter) && (draw.getThreePressed())){
+        if (player.getManaCost(3) <= player.getMana()){
+          player.setSpeedBuff(0.5);
+          player.setAttBuff(2);
+          player.decreaseMana(player.getManaCost(3));
+        }
+        draw.setThreePressed(false);
+      }
+      if ((player instanceof Fighter) && (draw.getFivePressed())){
+        if (player.getManaCost(5) <= player.getMana()){
+          player.getProjectiles().add(new DarkDash(player.getX(), player.getY(), (int)MouseInfo.getPointerInfo().getLocation().getX(), (int)MouseInfo.getPointerInfo().getLocation().getY()-25));
+          player.decreaseMana(player.getManaCost(5));
+        }
+        draw.setFivePressed(false);
+      }
+      if ((player instanceof Wizard) && (draw.getOnePressed())){
+        if (player.getManaCost(1) <= player.getMana()){
+          player.getProjectiles().add(new FireSpell((int)MouseInfo.getPointerInfo().getLocation().getX(), (int)MouseInfo.getPointerInfo().getLocation().getY()-25));
+          player.decreaseMana(player.getManaCost(1));
+        }
+        draw.setOnePressed(false);
+      }
+      if ((player instanceof Wizard) && (draw.getTwoPressed())){
+        if (player.getManaCost(2) <= player.getMana()){
+          player.getProjectiles().add(new IceSpell((int)MouseInfo.getPointerInfo().getLocation().getX(), (int)MouseInfo.getPointerInfo().getLocation().getY()-25));
+          player.decreaseMana(player.getManaCost(2));
+        }
+        draw.setTwoPressed(false);
+      }
+      if ((player instanceof Wizard) && (draw.getThreePressed())){
+        if (player.getManaCost(3) <= player.getMana()){
+          obstacles.add(new Wall(player.getX()+Player.getSize()/2, player.getY()+Player.getSize()/2, (int)MouseInfo.getPointerInfo().getLocation().getX(), (int)MouseInfo.getPointerInfo().getLocation().getY()-25));
+          player.decreaseMana(player.getManaCost(3));
+        }
+        draw.setThreePressed(false);
+      }
+      if ((player instanceof Wizard) && (draw.getFourPressed())){
+        if (player.getManaCost(4) <= player.getMana()){
+          player.getProjectiles().add(new AirSpell(player.getX()+Player.getSize()/2, player.getY()+Player.getSize()/2, (int)MouseInfo.getPointerInfo().getLocation().getX(), (int)MouseInfo.getPointerInfo().getLocation().getY()-25));
+          player.decreaseMana(player.getManaCost(4));
+        }
+        draw.setFourPressed(false);
+      }
+      if ((player instanceof Wizard) && (draw.getFivePressed())){
+        if (player.getManaCost(5) <= player.getMana()){
+          int [] displaceModifier = {(int)MouseInfo.getPointerInfo().getLocation().getX()-player.getX()-Player.getSize()/2, (int)MouseInfo.getPointerInfo().getLocation().getY()-player.getY()-Player.getSize()/2-25};
+          player.move(displaceModifier, enemies, obstacles, background);
+          player.decreaseMana(player.getManaCost(5));
+        }
+        draw.setFivePressed(false);
+      }
+      if ((player instanceof Hunter) && (draw.getOnePressed())){
+        if (player.getManaCost(1) <= player.getMana()){
+          player.getProjectiles().add(new FireTrap(player.getX() + Player.getSize()/2, player.getY() + Player.getSize()/2));
+          player.decreaseMana(player.getManaCost(1));
+        }
+        draw.setOnePressed(false);
+      }
+      if ((player instanceof Hunter) && (draw.getTwoPressed())){
+        if (player.getManaCost(2) <= player.getMana()){
+          player.getProjectiles().add(new IceTrap(player.getX() + Player.getSize()/2, player.getY() + Player.getSize()/2));
+          player.decreaseMana(player.getManaCost(2));
+        }
+        draw.setTwoPressed(false);
+      }
+      if ((player instanceof Hunter) && (draw.getThreePressed())){
+        if (player.getManaCost(3) <= player.getMana()){
+          player.getProjectiles().add(new EarthTrap(player.getX() + Player.getSize()/2, player.getY() + Player.getSize()/2));
+          player.decreaseMana(player.getManaCost(3));
+        }
+        draw.setThreePressed(false);
+      }
+      if ((player instanceof Hunter) && (draw.getFourPressed())){
+        if (player.getManaCost(4) <= player.getMana()){
+          player.getProjectiles().add(new AirTrap(player.getX() + Player.getSize()/2, player.getY() + Player.getSize()/2));
+          player.decreaseMana(player.getManaCost(4));
+        }
+        draw.setFourPressed(false);
+      }
+      if ((player instanceof Hunter) && (draw.getFivePressed())){
+        if (player.getManaCost(5) <= player.getMana()){
+          ArrayList<Projectile> trapExplosions = new ArrayList<Projectile>();
+          for (int i = 0; i < player.getProjectiles().size(); i++){
+            if (player.getProjectiles().get(i) instanceof Trap){
+              trapExplosions.add(((Trap)(player.getProjectiles().get(i))).explode());
+            }
           }
+          player.getProjectiles().clear();
+          player.getProjectiles().addAll(trapExplosions);
+          player.decreaseMana(player.getManaCost(5));
         }
-        player.getProjectiles().clear();
-        player.getProjectiles().addAll(trapExplosions);
-        player.decreaseMana(player.getManaCost(5));
+        draw.setFivePressed(false);
       }
-      draw.setFivePressed(false);
-    }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    int centeredX = Enemy.getSize()/2 - Player.getSize()/2;
-    int centeredY = Enemy.getSize()/2 - Player.getSize()/2;
-    for (int i = 0; i < enemies.size(); i++){
-      if (enemies.get(i).getX() < background.getX()){
-        enemies.get(i).setX(background.getX());
-      } else if (enemies.get(i).getX()+enemies.get(i).getSize() > background.getX() + background.getWidth()){
-        enemies.get(i).setX(background.getX() + background.getWidth() - enemies.get(i).getSize());
-      }
-      if (enemies.get(i).getY() < background.getY()){
-        enemies.get(i).setY(background.getY());
-      } else if (enemies.get(i).getY()+enemies.get(i).getSize() > background.getY() + background.getHeight()){
-        enemies.get(i).setY(background.getY() + background.getHeight()  - enemies.get(i).getSize());
-      }
-      if(enemies.get(i).getAggrobox().intersects(player.getHitbox())){
-        enemies.get(i).setAggro(1);
-      }
-      enemies.get(i).debuffs();
-      enemies.get(i).updateHitbox();
-      enemies.get(i).updateAggrobox();
-      if(enemies.get(i).getAggro() > 0){
-        if ((enemies.get(i) instanceof ProjectileE) && (((ProjectileE)(enemies.get(i))).getReload() < ((ProjectileE)(enemies.get(i))).getReloadCap())){
-          ((ProjectileE)(enemies.get(i))).addReload();
+      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      int centeredX = Enemy.getSize()/2 - Player.getSize()/2;
+      int centeredY = Enemy.getSize()/2 - Player.getSize()/2;
+      for (int i = 0; i < enemies.size(); i++){
+        if (enemies.get(i).getX() < background.getX()){
+          enemies.get(i).setX(background.getX());
+        } else if (enemies.get(i).getX()+enemies.get(i).getSize() > background.getX() + background.getWidth()){
+          enemies.get(i).setX(background.getX() + background.getWidth() - enemies.get(i).getSize());
         }
-        if (enemies.get(i) instanceof ProjectileE && ((ProjectileE)(enemies.get(i))).getDistance(player.getX()+Player.getSize()/2, player.getY()+Player.getSize()/2) <= ((ProjectileE)(enemies.get(i))).getRange()){
-          if (enemies.get(i).getSlow()){
-            if (((ProjectileE)(enemies.get(i))).getReload()/2 >= ((ProjectileE)(enemies.get(i))).getReloadCap()){
+        if (enemies.get(i).getY() < background.getY()){
+          enemies.get(i).setY(background.getY());
+        } else if (enemies.get(i).getY()+enemies.get(i).getSize() > background.getY() + background.getHeight()){
+          enemies.get(i).setY(background.getY() + background.getHeight()  - enemies.get(i).getSize());
+        }
+        if(enemies.get(i).getAggrobox().intersects(player.getHitbox())){
+          enemies.get(i).setAggro(1);
+        }
+        enemies.get(i).debuffs();
+        enemies.get(i).updateHitbox();
+        enemies.get(i).updateAggrobox();
+        if(enemies.get(i).getAggro() > 0){
+          if ((enemies.get(i) instanceof ProjectileE) && (((ProjectileE)(enemies.get(i))).getReload() < ((ProjectileE)(enemies.get(i))).getReloadCap())){
+            ((ProjectileE)(enemies.get(i))).addReload();
+          }
+          if (enemies.get(i) instanceof ProjectileE && ((ProjectileE)(enemies.get(i))).getDistance(player.getX()+Player.getSize()/2, player.getY()+Player.getSize()/2) <= ((ProjectileE)(enemies.get(i))).getRange()){
+            if (enemies.get(i).getSlow()){
+              if (((ProjectileE)(enemies.get(i))).getReload()/2 >= ((ProjectileE)(enemies.get(i))).getReloadCap()){
+                ((ProjectileE)(enemies.get(i))).fire(enemies.get(i).getX() + enemies.get(i).getSize()/2, enemies.get(i).getY() + enemies.get(i).getSize()/2, player.getX()+player.getSize()/2, player.getY()+player.getSize()/2);
+                ((ProjectileE)(enemies.get(i))).wipeReload();
+              }
+            } else if (((ProjectileE)(enemies.get(i))).getReload() >= ((ProjectileE)(enemies.get(i))).getReloadCap()){
               ((ProjectileE)(enemies.get(i))).fire(enemies.get(i).getX() + enemies.get(i).getSize()/2, enemies.get(i).getY() + enemies.get(i).getSize()/2, player.getX()+player.getSize()/2, player.getY()+player.getSize()/2);
               ((ProjectileE)(enemies.get(i))).wipeReload();
             }
-          } else if (((ProjectileE)(enemies.get(i))).getReload() >= ((ProjectileE)(enemies.get(i))).getReloadCap()){
-            ((ProjectileE)(enemies.get(i))).fire(enemies.get(i).getX() + enemies.get(i).getSize()/2, enemies.get(i).getY() + enemies.get(i).getSize()/2, player.getX()+player.getSize()/2, player.getY()+player.getSize()/2);
-            ((ProjectileE)(enemies.get(i))).wipeReload();
-          }
-          enemies.get(i).updateHitbox();
-        }else{
-          enemies.get(i).move(player.getX() - centeredX, player.getY() - centeredY); 
-        }
-      }
-      if (enemies.get(i).getHealth() <= 0){
-        score += 100;
-        int boostID = 0;
-        if (Math.random() < 0.1){
-          boostID = (int)(Math.random() * 4);
-          if (boostID==0){
-            player.getProjectiles().add(new AttOrb(enemies.get(i).getX(), enemies.get(i).getY()));
-          } else if (boostID==1){
-            player.getProjectiles().add(new DexOrb(enemies.get(i).getX(), enemies.get(i).getY()));
-          } else if (boostID==2){
-            player.getProjectiles().add(new SpeedOrb(enemies.get(i).getX(), enemies.get(i).getY()));
-          } else if (boostID==3){
-            player.getProjectiles().add(new HealthOrb(enemies.get(i).getX(), enemies.get(i).getY()));
+            enemies.get(i).updateHitbox();
+          }else{
+            enemies.get(i).move(player.getX() - centeredX, player.getY() - centeredY); 
           }
         }
-        enemies.remove(i);
-      }
-    }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    for (int i = 0; i < obstacles.size(); i++){
-      obstacles.get(i).increaseLifeTime();
-      for (int j = 0; j < player.getProjectiles().size(); j++){
-        if (obstacles.get(i).getHitbox().intersects(player.getProjectiles().get(j).getHitbox())){
-          player.getProjectiles().remove(j);
-        }
-      }
-      if (obstacles.get(i).getHitbox().intersects(player.getHitbox())){
-        double parityModifier = ((player.getX()+player.getSize()/2)-((player.getY()+player.getSize()/2)-(obstacles.get(i).getCenterY()-obstacles.get(i).getSlope()*obstacles.get(i).getCenterX()))/obstacles.get(i).getSlope())/Math.abs((player.getX()+player.getSize()/2)-((player.getY()+player.getSize()/2)-(obstacles.get(i).getCenterY()-obstacles.get(i).getSlope()*obstacles.get(i).getCenterX()))/obstacles.get(i).getSlope());
-        int [] displaceModifier = {(int)Math.round(parityModifier*player.getSpeed()*Math.cos(Math.atan(-1/-obstacles.get(i).getSlope()))),(int)Math.round(player.getSpeed()*parityModifier*Math.sin(Math.atan(-1/-obstacles.get(i).getSlope())))};
-        player.move(displaceModifier, enemies, obstacles, background);
-      }
-      for (int j = 0; j < enemies.size(); j++){
-        if (enemies.get(j) instanceof ProjectileE){
-          for (int k = 0; k < ((ProjectileE)(enemies.get(j))).getProjectiles().size(); k++){
-            if (obstacles.get(i).getHitbox().intersects(((ProjectileE)(enemies.get(j))).getProjectiles().get(k).getHitbox())){
-              ((ProjectileE)(enemies.get(j))).getProjectiles().remove(k);
+        if (enemies.get(i).getHealth() <= 0){
+          score += 100;
+          int boostID = 0;
+          if (Math.random() < 0.1){
+            boostID = (int)(Math.random() * 4);
+            if (boostID==0){
+              player.getProjectiles().add(new AttOrb(enemies.get(i).getX(), enemies.get(i).getY()));
+            } else if (boostID==1){
+              player.getProjectiles().add(new DexOrb(enemies.get(i).getX(), enemies.get(i).getY()));
+            } else if (boostID==2){
+              player.getProjectiles().add(new SpeedOrb(enemies.get(i).getX(), enemies.get(i).getY()));
+            } else if (boostID==3){
+              player.getProjectiles().add(new HealthOrb(enemies.get(i).getX(), enemies.get(i).getY()));
             }
           }
-        }
-        if (obstacles.get(i).getHitbox().intersects(enemies.get(j).getHitbox())){
-          double parityModifier = ((enemies.get(j).getX()+enemies.get(j).getSize()/2)-((enemies.get(j).getY()+enemies.get(j).getSize()/2)-(obstacles.get(i).getCenterY()-obstacles.get(i).getSlope()*obstacles.get(i).getCenterX()))/obstacles.get(i).getSlope())/Math.abs((enemies.get(j).getX()+enemies.get(j).getSize()/2)-((enemies.get(j).getY()+enemies.get(j).getSize()/2)-(obstacles.get(i).getCenterY()-obstacles.get(i).getSlope()*obstacles.get(i).getCenterX()))/obstacles.get(i).getSlope());
-          int [] displaceModifier = {(int)Math.round(3*enemies.get(j).getSpeed()*-parityModifier*Math.cos(Math.atan(-1/obstacles.get(i).getSlope()))),(int)Math.round(3*enemies.get(j).getSpeed()*-parityModifier*Math.sin(Math.atan(-1/obstacles.get(i).getSlope())))};
-          enemies.get(j).displace(displaceModifier);
-          //System.out.println(displaceModifier[0] + " " + displaceModifier[1]);
+          enemies.remove(i);
         }
       }
-      if (obstacles.get(i).getLifeTime() > 50){
-        obstacles.remove(i);
-      }
-    }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    for (int i = 0; i < player.getProjectiles().size(); i++){
-      boolean collision = false;
-      boolean removeProjectile = false;
-      for (int j = 0; j < enemies.size(); j++){
-        if ((enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))&&((player.getProjectiles().get(i) instanceof FireExplosion)||(player.getProjectiles().get(i) instanceof FireDagger)||(player.getProjectiles().get(i) instanceof FireSpell)||(player.getProjectiles().get(i) instanceof FireTrapExplosion))){//Projectile damages the enemy
-          enemies.get(j).setBurn(true);
-          collision = true;
-        } else if ((enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))&&(player.getProjectiles().get(i) instanceof FireFist)){
-          enemies.get(j).damage((int)(player.getProjectiles().get(i).getDamage()*player.getAttBuff()));
-        } else if ((enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))&&((player.getProjectiles().get(i) instanceof IceExplosion)||(player.getProjectiles().get(i) instanceof IceArrow)||(player.getProjectiles().get(i) instanceof IceAura)||(player.getProjectiles().get(i) instanceof IceFist)||(player.getProjectiles().get(i) instanceof IceSpell)||(player.getProjectiles().get(i) instanceof IceTrapExplosion))){
-          enemies.get(j).setSlow(true);
-          collision = true;
-        } else if ((enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))&&(player.getProjectiles().get(i) instanceof EarthArrow)){
-          collision = true;
-        } else if ((enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))&&((player.getProjectiles().get(i) instanceof EarthStun)||(player.getProjectiles().get(i) instanceof EarthTrapExplosion)||(player.getProjectiles().get(i) instanceof EarthSword))){
-          enemies.get(j).setStun(true);
-          collision = true;
-        } else if ((enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))&&((player.getProjectiles().get(i) instanceof AirArrow)||(player.getProjectiles().get(i) instanceof AirSword)||(player.getProjectiles().get(i) instanceof AirFist)||(player.getProjectiles().get(i) instanceof AirSpell))){
-          enemies.get(j).setFreeze(true);
-          collision = true;
-          if (player.getProjectiles().get(i) instanceof AirArrow){
-            if (((AirArrow)(player.getProjectiles().get(i))).getSecondLifeTime() == 0){
-              ((AirArrow)(player.getProjectiles().get(i))).setSecondLifeTime(1);
-            }
-          } else if (player.getProjectiles().get(i) instanceof AirSword){
-            if (((AirSword)(player.getProjectiles().get(i))).getSecondLifeTime() == 0){
-              ((AirSword)(player.getProjectiles().get(i))).setSecondLifeTime(1);
-            }
-          } else if (player.getProjectiles().get(i) instanceof AirFist){
-            if (((AirFist)(player.getProjectiles().get(i))).getSecondLifeTime() == 0){
-              ((AirFist)(player.getProjectiles().get(i))).setSecondLifeTime(1);
-            }
-          } else if (player.getProjectiles().get(i) instanceof AirSpell){
-            if (((AirSpell)(player.getProjectiles().get(i))).getSecondLifeTime() == 0){
-              ((AirSpell)(player.getProjectiles().get(i))).setSecondLifeTime(1);
-            }
+      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      for (int i = 0; i < obstacles.size(); i++){
+        obstacles.get(i).increaseLifeTime();
+        for (int j = 0; j < player.getProjectiles().size(); j++){
+          if (obstacles.get(i).getHitbox().intersects(player.getProjectiles().get(j).getHitbox())){
+            player.getProjectiles().remove(j);
           }
-          double slope = (player.getProjectiles().get(i).getY() - player.getProjectiles().get(i).getSpawnY())*1.0/(player.getProjectiles().get(i).getX() - player.getProjectiles().get(i).getSpawnX());
-          if (player.getProjectiles().get(i).getX() < player.getX()){
-            int [] displaceModifier = {(int)Math.round(2*player.getProjectiles().get(i).getSpeed()*Math.cos(Math.atan(slope))),(int)Math.round(2*player.getProjectiles().get(i).getSpeed()*Math.sin(Math.atan(slope)))};
-            enemies.get(j).displace(displaceModifier);
-          } else {
-            int [] displaceModifier = {-(int)Math.round(2*player.getProjectiles().get(i).getSpeed()*Math.cos(Math.atan(slope))),-(int)Math.round(2*player.getProjectiles().get(i).getSpeed()*Math.sin(Math.atan(slope)))};
-            enemies.get(j).displace(displaceModifier);
-          }
-        } else if ((enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))&&(player.getProjectiles().get(i) instanceof DarkArrow)){
-          enemies.get(j).damage((int)(player.getProjectiles().get(i).getDamage()*player.getAttBuff()));
-          collision = true;
-        } else if ((enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))&&(player.getProjectiles().get(i) instanceof AirTrapExplosion)){
-          int[] displaceModifier = {-(player.getProjectiles().get(i).getX() - enemies.get(j).getX())/(20),-(player.getProjectiles().get(i).getY() - enemies.get(j).getY())/(20)};
-          enemies.get(j).displace(displaceModifier);
-        } else if (player.getProjectiles().get(i) instanceof DarkDecoy){//Global
-          if (!enemies.get(j).getDecoy()){
-            enemies.get(j).setDecoy(player.getProjectiles().get(i).getX(),player.getProjectiles().get(i).getY());
-          } else {
-            enemies.get(j).setDecoyCoord(player.getProjectiles().get(i).getX(),player.getProjectiles().get(i).getY());
-          }
-        } else if ((enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))&&(player.getProjectiles().get(i) instanceof Trap)){
-          player.getProjectiles().add(((Trap)(player.getProjectiles().get(i))).explode());
-          collision = true;
-        } else if ((enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))&&(collision==false)){
-          //System.out.println(enemies.get(j).getHitbox().getLocation() + ": Enemy" + enemies.get(j).getHitbox().getHeight() + ": Enemy" + player.getProjectiles().get(i).getHitbox().getLocation() + ": Proj" + player.getProjectiles().get(i).getHitbox().getHeight()+ ": Proj");
-          enemies.get(j).damage((int)(player.getProjectiles().get(i).getDamage()*player.getAttBuff()));
-          collision = true;
         }
-      }
-      if (player.getProjectiles().get(i) instanceof Orb && (player.getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))){
-        if (player.getProjectiles().get(i) instanceof DexOrb){
-          player.setDexBuff(2);
-        } else if (player.getProjectiles().get(i) instanceof AttOrb){
-          player.setAttBuff(2);
-        } else if (player.getProjectiles().get(i) instanceof HealthOrb){
-          player.damage(-100);
-        } else if (player.getProjectiles().get(i) instanceof SpeedOrb){
-          player.setSpeedBuff(1.5);
-        }
-        removeProjectile = true;
-      }
-        
-      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      player.getProjectiles().get(i).move();
-      if (player.getProjectiles().get(i) instanceof AirArrow){
-        if (((AirArrow)(player.getProjectiles().get(i))).getSecondLifeTime() > 0){
-          ((AirArrow)(player.getProjectiles().get(i))).setSecondLifeTime(((AirArrow)(player.getProjectiles().get(i))).getSecondLifeTime() + 1);
-        }
-      } else if (player.getProjectiles().get(i) instanceof AirSword){
-        if (((AirSword)(player.getProjectiles().get(i))).getSecondLifeTime() > 0){
-          ((AirSword)(player.getProjectiles().get(i))).setSecondLifeTime(((AirSword)(player.getProjectiles().get(i))).getSecondLifeTime() + 1);
-        }
-      } else if (player.getProjectiles().get(i) instanceof AirFist){
-        if (((AirFist)(player.getProjectiles().get(i))).getSecondLifeTime() > 0){
-          ((AirFist)(player.getProjectiles().get(i))).setSecondLifeTime(((AirFist)(player.getProjectiles().get(i))).getSecondLifeTime() + 1);
-        }
-      } else if (player.getProjectiles().get(i) instanceof AirSpell){
-        if (((AirSpell)(player.getProjectiles().get(i))).getSecondLifeTime() > 0){
-          ((AirSpell)(player.getProjectiles().get(i))).setSecondLifeTime(((AirSpell)(player.getProjectiles().get(i))).getSecondLifeTime() + 1);
-        }
-      } else if ((player.getProjectiles().get(i) instanceof WaterDash)||(player.getProjectiles().get(i) instanceof DarkDash)){
-        int [] displaceModifier = {player.getProjectiles().get(i).getX()-player.getX(), player.getProjectiles().get(i).getY()-player.getY()};
-        player.move(displaceModifier, enemies, obstacles, background);
-      } else if (player.getProjectiles().get(i) instanceof EarthStun){
-        player.getProjectiles().get(i).setX(player.getX());
-        player.getProjectiles().get(i).setY(player.getY());
-      }
-      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      if ((player.getProjectiles().get(i).getLifeTime() > 50) && (player.getProjectiles().get(i) instanceof Sword)){
-        removeProjectile = true;
-      }
-      if ((player.getProjectiles().get(i).getLifeTime() > 25) && (player.getProjectiles().get(i) instanceof Dagger)){
-        removeProjectile = true;
-      }
-      if ((player.getProjectiles().get(i).getLifeTime() > 100) && (player.getProjectiles().get(i) instanceof DarkDecoy)){
-        removeProjectile = true;
-      }
-      if ((player.getProjectiles().get(i).getLifeTime() > 25) && (player.getProjectiles().get(i) instanceof Fist)){
-        if ((player.getProjectiles().get(i).getLifeTime() > 50) && (player.getProjectiles().get(i) instanceof FireFist)){
-          removeProjectile = true;
-        } else if (!(player.getProjectiles().get(i) instanceof FireFist)){
-          removeProjectile = true;
-        }
-      }
-      if ((player.getProjectiles().get(i).getLifeTime() > 100)&&((player.getProjectiles().get(i) instanceof Arrow)||(player.getProjectiles().get(i) instanceof Bolt))){
-        if (player.getProjectiles().get(i) instanceof FireArrow){
-          player.getProjectiles().add(new FireExplosion(player.getProjectiles().get(i).getX(), player.getProjectiles().get(i).getY()));
-        } else if (player.getProjectiles().get(i) instanceof IceArrow){
-          player.getProjectiles().add(new IceExplosion(player.getProjectiles().get(i).getX(), player.getProjectiles().get(i).getY()));
-        } else if (player.getProjectiles().get(i) instanceof EarthArrow){
-          obstacles.add(new Wall(player.getProjectiles().get(i).getSpawnX(), player.getProjectiles().get(i).getSpawnY(), player.getProjectiles().get(i).getX(), player.getProjectiles().get(i).getY()));
-        }
-        removeProjectile = true;
-      }
-      if ((player.getProjectiles().get(i).getLifeTime() > 1000)&&((player.getProjectiles().get(i) instanceof Trap)||(player.getProjectiles().get(i) instanceof Orb))){
-        removeProjectile = true;
-      }
-      if (collision && ((player.getProjectiles().get(i) instanceof Arrow)||(player.getProjectiles().get(i) instanceof Sword)||(player.getProjectiles().get(i) instanceof Dagger)||(player.getProjectiles().get(i) instanceof Fist)||(player.getProjectiles().get(i) instanceof Bolt)||(player.getProjectiles().get(i) instanceof Trap))){
-        if (player.getProjectiles().get(i) instanceof FireArrow){
-          player.getProjectiles().add(new FireExplosion(player.getProjectiles().get(i).getX(), player.getProjectiles().get(i).getY()));
-        }
-        if (player.getProjectiles().get(i) instanceof IceArrow){
-          player.getProjectiles().add(new IceExplosion(player.getProjectiles().get(i).getX(), player.getProjectiles().get(i).getY()));
-        }
-        if (player.getProjectiles().get(i) instanceof EarthArrow){
-          obstacles.add(new Wall(player.getProjectiles().get(i).getSpawnX(), player.getProjectiles().get(i).getSpawnY(), player.getProjectiles().get(i).getX(), player.getProjectiles().get(i).getY()));
-        }
-        if (player.getProjectiles().get(i) instanceof DarkArrow){
-          int [] displaceModifier = {player.getProjectiles().get(i).getX()-player.getX(), player.getProjectiles().get(i).getY()-player.getY()};
+        if (obstacles.get(i).getHitbox().intersects(player.getHitbox())){
+          double parityModifier = ((player.getX()+player.getSize()/2)-((player.getY()+player.getSize()/2)-(obstacles.get(i).getCenterY()-obstacles.get(i).getSlope()*obstacles.get(i).getCenterX()))/obstacles.get(i).getSlope())/Math.abs((player.getX()+player.getSize()/2)-((player.getY()+player.getSize()/2)-(obstacles.get(i).getCenterY()-obstacles.get(i).getSlope()*obstacles.get(i).getCenterX()))/obstacles.get(i).getSlope());
+          int [] displaceModifier = {(int)Math.round(parityModifier*player.getSpeed()*Math.cos(Math.atan(-1/-obstacles.get(i).getSlope()))),(int)Math.round(player.getSpeed()*parityModifier*Math.sin(Math.atan(-1/-obstacles.get(i).getSlope())))};
           player.move(displaceModifier, enemies, obstacles, background);
         }
-        removeProjectile = true;
-        if ((player.getProjectiles().get(i) instanceof AirArrow)||(player.getProjectiles().get(i) instanceof AirSword)||(player.getProjectiles().get(i) instanceof AirFist)||(player.getProjectiles().get(i) instanceof AirSpell)){
-          removeProjectile = false;
+        for (int j = 0; j < enemies.size(); j++){
+          if (enemies.get(j) instanceof ProjectileE){
+            for (int k = 0; k < ((ProjectileE)(enemies.get(j))).getProjectiles().size(); k++){
+              if (obstacles.get(i).getHitbox().intersects(((ProjectileE)(enemies.get(j))).getProjectiles().get(k).getHitbox())){
+                ((ProjectileE)(enemies.get(j))).getProjectiles().remove(k);
+              }
+            }
+          }
+          if (obstacles.get(i).getHitbox().intersects(enemies.get(j).getHitbox())){
+            double parityModifier = ((enemies.get(j).getX()+enemies.get(j).getSize()/2)-((enemies.get(j).getY()+enemies.get(j).getSize()/2)-(obstacles.get(i).getCenterY()-obstacles.get(i).getSlope()*obstacles.get(i).getCenterX()))/obstacles.get(i).getSlope())/Math.abs((enemies.get(j).getX()+enemies.get(j).getSize()/2)-((enemies.get(j).getY()+enemies.get(j).getSize()/2)-(obstacles.get(i).getCenterY()-obstacles.get(i).getSlope()*obstacles.get(i).getCenterX()))/obstacles.get(i).getSlope());
+            int [] displaceModifier = {(int)Math.round(3*enemies.get(j).getSpeed()*-parityModifier*Math.cos(Math.atan(-1/obstacles.get(i).getSlope()))),(int)Math.round(3*enemies.get(j).getSpeed()*-parityModifier*Math.sin(Math.atan(-1/obstacles.get(i).getSlope())))};
+            enemies.get(j).displace(displaceModifier);
+            //System.out.println(displaceModifier[0] + " " + displaceModifier[1]);
+          }
+        }
+        if (obstacles.get(i).getLifeTime() > 50){
+          obstacles.remove(i);
         }
       }
-      if ((player.getProjectiles().get(i).getLifeTime() > 50) 
-            && ((player.getProjectiles().get(i) instanceof FireExplosion) 
-                  || (player.getProjectiles().get(i) instanceof IceExplosion) 
-                  || (player.getProjectiles().get(i) instanceof WaterDash) 
-                  || (player.getProjectiles().get(i) instanceof EarthStun)
-                  || (player.getProjectiles().get(i) instanceof FireSpell)
-                  || (player.getProjectiles().get(i) instanceof IceSpell)
-                  || (player.getProjectiles().get(i) instanceof FireTrapExplosion)
-                  || (player.getProjectiles().get(i) instanceof IceTrapExplosion)
-                  || (player.getProjectiles().get(i) instanceof EarthTrapExplosion)
-                  || (player.getProjectiles().get(i) instanceof AirTrapExplosion))){//Controls how long an aoe lasts
-        removeProjectile = true;
+      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      for (int i = 0; i < player.getProjectiles().size(); i++){
+        boolean collision = false;
+        boolean removeProjectile = false;
+        for (int j = 0; j < enemies.size(); j++){
+          if ((enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))&&((player.getProjectiles().get(i) instanceof FireExplosion)||(player.getProjectiles().get(i) instanceof FireDagger)||(player.getProjectiles().get(i) instanceof FireSpell)||(player.getProjectiles().get(i) instanceof FireTrapExplosion))){//Projectile damages the enemy
+            enemies.get(j).setBurn(true);
+            collision = true;
+          } else if ((enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))&&(player.getProjectiles().get(i) instanceof FireFist)){
+            enemies.get(j).damage((int)(player.getProjectiles().get(i).getDamage()*player.getAttBuff()));
+          } else if ((enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))&&((player.getProjectiles().get(i) instanceof IceExplosion)||(player.getProjectiles().get(i) instanceof IceArrow)||(player.getProjectiles().get(i) instanceof IceAura)||(player.getProjectiles().get(i) instanceof IceFist)||(player.getProjectiles().get(i) instanceof IceSpell)||(player.getProjectiles().get(i) instanceof IceTrapExplosion))){
+            enemies.get(j).setSlow(true);
+            collision = true;
+          } else if ((enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))&&(player.getProjectiles().get(i) instanceof EarthArrow)){
+            collision = true;
+          } else if ((enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))&&((player.getProjectiles().get(i) instanceof EarthStun)||(player.getProjectiles().get(i) instanceof EarthTrapExplosion)||(player.getProjectiles().get(i) instanceof EarthSword))){
+            enemies.get(j).setStun(true);
+            collision = true;
+          } else if ((enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))&&((player.getProjectiles().get(i) instanceof AirArrow)||(player.getProjectiles().get(i) instanceof AirSword)||(player.getProjectiles().get(i) instanceof AirFist)||(player.getProjectiles().get(i) instanceof AirSpell))){
+            enemies.get(j).setFreeze(true);
+            collision = true;
+            if (player.getProjectiles().get(i) instanceof AirArrow){
+              if (((AirArrow)(player.getProjectiles().get(i))).getSecondLifeTime() == 0){
+                ((AirArrow)(player.getProjectiles().get(i))).setSecondLifeTime(1);
+              }
+            } else if (player.getProjectiles().get(i) instanceof AirSword){
+              if (((AirSword)(player.getProjectiles().get(i))).getSecondLifeTime() == 0){
+                ((AirSword)(player.getProjectiles().get(i))).setSecondLifeTime(1);
+              }
+            } else if (player.getProjectiles().get(i) instanceof AirFist){
+              if (((AirFist)(player.getProjectiles().get(i))).getSecondLifeTime() == 0){
+                ((AirFist)(player.getProjectiles().get(i))).setSecondLifeTime(1);
+              }
+            } else if (player.getProjectiles().get(i) instanceof AirSpell){
+              if (((AirSpell)(player.getProjectiles().get(i))).getSecondLifeTime() == 0){
+                ((AirSpell)(player.getProjectiles().get(i))).setSecondLifeTime(1);
+              }
+            }
+            double slope = (player.getProjectiles().get(i).getY() - player.getProjectiles().get(i).getSpawnY())*1.0/(player.getProjectiles().get(i).getX() - player.getProjectiles().get(i).getSpawnX());
+            if (player.getProjectiles().get(i).getX() < player.getX()){
+              int [] displaceModifier = {(int)Math.round(2*player.getProjectiles().get(i).getSpeed()*Math.cos(Math.atan(slope))),(int)Math.round(2*player.getProjectiles().get(i).getSpeed()*Math.sin(Math.atan(slope)))};
+              enemies.get(j).displace(displaceModifier);
+            } else {
+              int [] displaceModifier = {-(int)Math.round(2*player.getProjectiles().get(i).getSpeed()*Math.cos(Math.atan(slope))),-(int)Math.round(2*player.getProjectiles().get(i).getSpeed()*Math.sin(Math.atan(slope)))};
+              enemies.get(j).displace(displaceModifier);
+            }
+          } else if ((enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))&&(player.getProjectiles().get(i) instanceof DarkArrow)){
+            enemies.get(j).damage((int)(player.getProjectiles().get(i).getDamage()*player.getAttBuff()));
+            collision = true;
+          } else if ((enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))&&(player.getProjectiles().get(i) instanceof AirTrapExplosion)){
+            int[] displaceModifier = {-(player.getProjectiles().get(i).getX() - enemies.get(j).getX())/(20),-(player.getProjectiles().get(i).getY() - enemies.get(j).getY())/(20)};
+            enemies.get(j).displace(displaceModifier);
+          } else if (player.getProjectiles().get(i) instanceof DarkDecoy){//Global
+            if (!enemies.get(j).getDecoy()){
+              enemies.get(j).setDecoy(player.getProjectiles().get(i).getX(),player.getProjectiles().get(i).getY());
+            } else {
+              enemies.get(j).setDecoyCoord(player.getProjectiles().get(i).getX(),player.getProjectiles().get(i).getY());
+            }
+          } else if ((enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))&&(player.getProjectiles().get(i) instanceof Trap)){
+            player.getProjectiles().add(((Trap)(player.getProjectiles().get(i))).explode());
+            collision = true;
+          } else if ((enemies.get(j).getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))&&(collision==false)){
+            //System.out.println(enemies.get(j).getHitbox().getLocation() + ": Enemy" + enemies.get(j).getHitbox().getHeight() + ": Enemy" + player.getProjectiles().get(i).getHitbox().getLocation() + ": Proj" + player.getProjectiles().get(i).getHitbox().getHeight()+ ": Proj");
+            enemies.get(j).damage((int)(player.getProjectiles().get(i).getDamage()*player.getAttBuff()));
+            collision = true;
+          }
+        }
+        if (player.getProjectiles().get(i) instanceof Orb && (player.getHitbox().intersects(player.getProjectiles().get(i).getHitbox()))){
+          if (player.getProjectiles().get(i) instanceof DexOrb){
+            player.setDexBuff(2);
+          } else if (player.getProjectiles().get(i) instanceof AttOrb){
+            player.setAttBuff(2);
+          } else if (player.getProjectiles().get(i) instanceof HealthOrb){
+            player.damage(-100);
+          } else if (player.getProjectiles().get(i) instanceof SpeedOrb){
+            player.setSpeedBuff(1.5);
+          }
+          removeProjectile = true;
+        }
+        
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        player.getProjectiles().get(i).move();
+        if (player.getProjectiles().get(i) instanceof AirArrow){
+          if (((AirArrow)(player.getProjectiles().get(i))).getSecondLifeTime() > 0){
+            ((AirArrow)(player.getProjectiles().get(i))).setSecondLifeTime(((AirArrow)(player.getProjectiles().get(i))).getSecondLifeTime() + 1);
+          }
+        } else if (player.getProjectiles().get(i) instanceof AirSword){
+          if (((AirSword)(player.getProjectiles().get(i))).getSecondLifeTime() > 0){
+            ((AirSword)(player.getProjectiles().get(i))).setSecondLifeTime(((AirSword)(player.getProjectiles().get(i))).getSecondLifeTime() + 1);
+          }
+        } else if (player.getProjectiles().get(i) instanceof AirFist){
+          if (((AirFist)(player.getProjectiles().get(i))).getSecondLifeTime() > 0){
+            ((AirFist)(player.getProjectiles().get(i))).setSecondLifeTime(((AirFist)(player.getProjectiles().get(i))).getSecondLifeTime() + 1);
+          }
+        } else if (player.getProjectiles().get(i) instanceof AirSpell){
+          if (((AirSpell)(player.getProjectiles().get(i))).getSecondLifeTime() > 0){
+            ((AirSpell)(player.getProjectiles().get(i))).setSecondLifeTime(((AirSpell)(player.getProjectiles().get(i))).getSecondLifeTime() + 1);
+          }
+        } else if ((player.getProjectiles().get(i) instanceof WaterDash)||(player.getProjectiles().get(i) instanceof DarkDash)){
+          int [] displaceModifier = {player.getProjectiles().get(i).getX()-player.getX(), player.getProjectiles().get(i).getY()-player.getY()};
+          player.move(displaceModifier, enemies, obstacles, background);
+        } else if (player.getProjectiles().get(i) instanceof EarthStun){
+          player.getProjectiles().get(i).setX(player.getX());
+          player.getProjectiles().get(i).setY(player.getY());
+        }
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        if ((player.getProjectiles().get(i).getLifeTime() > 50) && (player.getProjectiles().get(i) instanceof Sword)){
+          removeProjectile = true;
+        }
+        if ((player.getProjectiles().get(i).getLifeTime() > 25) && (player.getProjectiles().get(i) instanceof Dagger)){
+          removeProjectile = true;
+        }
+        if ((player.getProjectiles().get(i).getLifeTime() > 100) && (player.getProjectiles().get(i) instanceof DarkDecoy)){
+          removeProjectile = true;
+        }
+        if ((player.getProjectiles().get(i).getLifeTime() > 25) && (player.getProjectiles().get(i) instanceof Fist)){
+          if ((player.getProjectiles().get(i).getLifeTime() > 50) && (player.getProjectiles().get(i) instanceof FireFist)){
+            removeProjectile = true;
+          } else if (!(player.getProjectiles().get(i) instanceof FireFist)){
+            removeProjectile = true;
+          }
+        }
+        if ((player.getProjectiles().get(i).getLifeTime() > 100)&&((player.getProjectiles().get(i) instanceof Arrow)||(player.getProjectiles().get(i) instanceof Bolt))){
+          if (player.getProjectiles().get(i) instanceof FireArrow){
+            player.getProjectiles().add(new FireExplosion(player.getProjectiles().get(i).getX(), player.getProjectiles().get(i).getY()));
+          } else if (player.getProjectiles().get(i) instanceof IceArrow){
+            player.getProjectiles().add(new IceExplosion(player.getProjectiles().get(i).getX(), player.getProjectiles().get(i).getY()));
+          } else if (player.getProjectiles().get(i) instanceof EarthArrow){
+            obstacles.add(new Wall(player.getProjectiles().get(i).getSpawnX(), player.getProjectiles().get(i).getSpawnY(), player.getProjectiles().get(i).getX(), player.getProjectiles().get(i).getY()));
+          }
+          removeProjectile = true;
+        }
+        if ((player.getProjectiles().get(i).getLifeTime() > 1000)&&((player.getProjectiles().get(i) instanceof Trap)||(player.getProjectiles().get(i) instanceof Orb))){
+          removeProjectile = true;
+        }
+        if (collision && ((player.getProjectiles().get(i) instanceof Arrow)||(player.getProjectiles().get(i) instanceof Sword)||(player.getProjectiles().get(i) instanceof Dagger)||(player.getProjectiles().get(i) instanceof Fist)||(player.getProjectiles().get(i) instanceof Bolt)||(player.getProjectiles().get(i) instanceof Trap))){
+          if (player.getProjectiles().get(i) instanceof FireArrow){
+            player.getProjectiles().add(new FireExplosion(player.getProjectiles().get(i).getX(), player.getProjectiles().get(i).getY()));
+          }
+          if (player.getProjectiles().get(i) instanceof IceArrow){
+            player.getProjectiles().add(new IceExplosion(player.getProjectiles().get(i).getX(), player.getProjectiles().get(i).getY()));
+          }
+          if (player.getProjectiles().get(i) instanceof EarthArrow){
+            obstacles.add(new Wall(player.getProjectiles().get(i).getSpawnX(), player.getProjectiles().get(i).getSpawnY(), player.getProjectiles().get(i).getX(), player.getProjectiles().get(i).getY()));
+          }
+          if (player.getProjectiles().get(i) instanceof DarkArrow){
+            int [] displaceModifier = {player.getProjectiles().get(i).getX()-player.getX(), player.getProjectiles().get(i).getY()-player.getY()};
+            player.move(displaceModifier, enemies, obstacles, background);
+          }
+          removeProjectile = true;
+          if ((player.getProjectiles().get(i) instanceof AirArrow)||(player.getProjectiles().get(i) instanceof AirSword)||(player.getProjectiles().get(i) instanceof AirFist)||(player.getProjectiles().get(i) instanceof AirSpell)){
+            removeProjectile = false;
+          }
+        }
+        if ((player.getProjectiles().get(i).getLifeTime() > 50) 
+              && ((player.getProjectiles().get(i) instanceof FireExplosion) 
+                    || (player.getProjectiles().get(i) instanceof IceExplosion) 
+                    || (player.getProjectiles().get(i) instanceof WaterDash) 
+                    || (player.getProjectiles().get(i) instanceof EarthStun)
+                    || (player.getProjectiles().get(i) instanceof FireSpell)
+                    || (player.getProjectiles().get(i) instanceof IceSpell)
+                    || (player.getProjectiles().get(i) instanceof FireTrapExplosion)
+                    || (player.getProjectiles().get(i) instanceof IceTrapExplosion)
+                    || (player.getProjectiles().get(i) instanceof EarthTrapExplosion)
+                    || (player.getProjectiles().get(i) instanceof AirTrapExplosion))){//Controls how long an aoe lasts
+          removeProjectile = true;
+        }
+        if ((player.getProjectiles().get(i).getLifeTime() > 25)&&(player.getProjectiles().get(i) instanceof DarkDash)){
+          removeProjectile = true;
+        }
+        if (player.getProjectiles().get(i) instanceof AirArrow){
+          if (((AirArrow)(player.getProjectiles().get(i))).getSecondLifeTime() > 50){
+            removeProjectile = true;
+          }
+        } else if (player.getProjectiles().get(i) instanceof AirSword){
+          if (((AirSword)(player.getProjectiles().get(i))).getSecondLifeTime() > 50){
+            removeProjectile = true;
+          }
+        } else if (player.getProjectiles().get(i) instanceof AirFist){
+          if (((AirFist)(player.getProjectiles().get(i))).getSecondLifeTime() > 50){
+            removeProjectile = true;
+          }
+        } else if (player.getProjectiles().get(i) instanceof AirSpell){
+          if (player.getProjectiles().get(i).getLifeTime() > 200){
+            removeProjectile = true;
+          }
+          if (((AirSpell)(player.getProjectiles().get(i))).getSecondLifeTime() > 100){
+            removeProjectile = true;
+          }
+        }
+        if ((removeProjectile)||!(new Rectangle(background.getX(), background.getY(), background.getWidth(), background.getHeight())).contains(player.getProjectiles().get(i).getHitbox())){
+          player.getProjectiles().remove(i);
+        }
       }
-      if ((player.getProjectiles().get(i).getLifeTime() > 25)&&(player.getProjectiles().get(i) instanceof DarkDash)){
-        removeProjectile = true;
+      if (player.getProjectiles().indexOf(paladinSlow) >= 0){
+        player.getProjectiles().remove(paladinSlow);
       }
-      if (player.getProjectiles().get(i) instanceof AirArrow){
-        if (((AirArrow)(player.getProjectiles().get(i))).getSecondLifeTime() > 50){
-          removeProjectile = true;
-        }
-      } else if (player.getProjectiles().get(i) instanceof AirSword){
-        if (((AirSword)(player.getProjectiles().get(i))).getSecondLifeTime() > 50){
-          removeProjectile = true;
-        }
-      } else if (player.getProjectiles().get(i) instanceof AirFist){
-        if (((AirFist)(player.getProjectiles().get(i))).getSecondLifeTime() > 50){
-          removeProjectile = true;
-        }
-      } else if (player.getProjectiles().get(i) instanceof AirSpell){
-        if (player.getProjectiles().get(i).getLifeTime() > 200){
-          removeProjectile = true;
-        }
-        if (((AirSpell)(player.getProjectiles().get(i))).getSecondLifeTime() > 100){
-          removeProjectile = true;
-        }
-      }
-      if ((removeProjectile)||!(new Rectangle(background.getX(), background.getY(), background.getWidth(), background.getHeight())).contains(player.getProjectiles().get(i).getHitbox())){
-        player.getProjectiles().remove(i);
-      }
-    }
-    if (player.getProjectiles().indexOf(paladinSlow) >= 0){
-      player.getProjectiles().remove(paladinSlow);
-    }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    draw.projectiles(player.getProjectiles());
-    draw.setMana(player.getMana());
-    enemyProjectiles.clear();
-    for(int i=0; i<enemies.size(); i++){
-      if (enemies.get(i) instanceof ProjectileE){
-        for(int j=0; j< ((ProjectileE)(enemies.get(i))).getProjectiles().size(); j++){
-          boolean playerColl = false; 
-          ((ProjectileE)(enemies.get(i))).getProjectiles().get(j).move();
-          //if ((((ProjectileE)(enemies.get(i))).getProjectiles().get(j).getTargetX()==((ProjectileE)(enemies.get(i))).getProjectiles().get(j).getX()) && (((ProjectileE)(enemies.get(i))).getProjectiles().get(j).getTargetY()==((ProjectileE)(enemies.get(i))).getProjectiles().get(j).getY())){
+      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      draw.projectiles(player.getProjectiles());
+      draw.setMana(player.getMana());
+      enemyProjectiles.clear();
+      for(int i=0; i<enemies.size(); i++){
+        if (enemies.get(i) instanceof ProjectileE){
+          for(int j=0; j< ((ProjectileE)(enemies.get(i))).getProjectiles().size(); j++){
+            boolean playerColl = false; 
+            ((ProjectileE)(enemies.get(i))).getProjectiles().get(j).move();
+            //if ((((ProjectileE)(enemies.get(i))).getProjectiles().get(j).getTargetX()==((ProjectileE)(enemies.get(i))).getProjectiles().get(j).getX()) && (((ProjectileE)(enemies.get(i))).getProjectiles().get(j).getTargetY()==((ProjectileE)(enemies.get(i))).getProjectiles().get(j).getY())){
             //playerColl = true;
-          //}
-          if (((ProjectileE)(enemies.get(i))).getProjectiles().get(j).getHitbox().intersects(player.getHitbox())){
-            playerColl = true;
-            player.damage(((ProjectileE)enemies.get(i)).getProjectiles().get(j).getDamage());
-          }
-          if (((ProjectileE)(enemies.get(i))).getProjectiles().get(j).getLifeTime() > 50){
-            playerColl = true;
-          }
-          if ((playerColl)||!(new Rectangle(background.getX(), background.getY(), background.getWidth(), background.getHeight())).contains(player.getProjectiles().get(i).getHitbox())){
-            ((ProjectileE)(enemies.get(i))).getProjectiles().remove(j);
-            //playerColl = false;
-          }
-          enemyProjectiles.addAll(((ProjectileE)(enemies.get(i))).getProjectiles());
-        }//enemy projectiles
+            //}
+            if (((ProjectileE)(enemies.get(i))).getProjectiles().get(j).getHitbox().intersects(player.getHitbox())){
+              playerColl = true;
+              player.damage(((ProjectileE)enemies.get(i)).getProjectiles().get(j).getDamage());
+            }
+            if (((ProjectileE)(enemies.get(i))).getProjectiles().get(j).getLifeTime() > 50){
+              playerColl = true;
+            }
+            if ((playerColl)||!(new Rectangle(background.getX(), background.getY(), background.getWidth(), background.getHeight())).contains(((ProjectileE)enemies.get(i)).getProjectiles().get(j).getHitbox())){
+              ((ProjectileE)(enemies.get(i))).getProjectiles().remove(j);
+              //playerColl = false;
+            }
+            enemyProjectiles.addAll(((ProjectileE)(enemies.get(i))).getProjectiles());
+          }//enemy projectiles
+        }
       }
-    }
-    draw.setHealth(player.getHealth());
-    draw.enemyProjectiles(enemyProjectiles);
-    draw.obstacles(obstacles);
-    draw.background(background);
-    draw.setCoord(new int[] {player.getX(), player.getY()});
-    if (Math.random()<0.01+difficulty){
-      //enemies.add(new Enemy(5,40, (int)(Math.random()*400), (int)(Math.random()*400) + 200));
-      enemies.add(new ProjectileE(10,0, (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getWidth()), (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getHeight()), 100,200, 2));
-    }
-    if (Math.random()<0.001+difficulty){
-      enemies.add(new SniperE(10,0, (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getWidth()), (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getHeight()),400,800,2));
-    }
-    if (Math.random()<0.001+difficulty){
-      enemies.add(new SpeedyE(5,0, (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getWidth()), (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getHeight()),50,100,3));
-    }
-    if (Math.random()<0.001+difficulty){
-      enemies.add(new GlassCannonE(1,0, (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getWidth()), (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getHeight()),100,100,2));
-    }
-    if (Math.random()<0.0005+difficulty){
-      enemies.add(new BossE(50,0, (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getWidth()), (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getHeight()),400,200,1));
-    }
-    difficulty+=1.0/10000000.0;
-    draw.enemies(enemies);
-    if (draw != null)
+      draw.setHealth(player.getHealth());
+      draw.enemyProjectiles(enemyProjectiles);
+      draw.obstacles(obstacles);
+      draw.background(background);
+      draw.setCoord(new int[] {player.getX(), player.getY()});
+      if (Math.random()<0.01+difficulty){
+        //enemies.add(new Enemy(5,40, (int)(Math.random()*400), (int)(Math.random()*400) + 200));
+        enemies.add(new ProjectileE(10,0, (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getWidth()), (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getHeight()), 100,200, 2));
+      }
+      if (Math.random()<0.001+difficulty){
+        enemies.add(new SniperE(10,0, (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getWidth()), (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getHeight()),400,800,2));
+      }
+      if (Math.random()<0.001+difficulty){
+        enemies.add(new SpeedyE(5,0, (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getWidth()), (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getHeight()),50,100,3));
+      }
+      if (Math.random()<0.001+difficulty){
+        enemies.add(new GlassCannonE(1,0, (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getWidth()), (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getHeight()),100,100,2));
+      }
+      if (Math.random()<0.0005+difficulty){
+        enemies.add(new BossE(50,0, (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getWidth()), (int)(Math.random()*Toolkit.getDefaultToolkit().getScreenSize().getHeight()),400,200,1));
+      }
+      difficulty+=1.0/10000000.0;
+      draw.enemies(enemies);
+      if (draw != null)
+        draw.repaint();
+    } else if (pageId == 2){
+      draw.setId(2);
+      draw.setScore(score);
+      if (draw.getLeftClick()){
+        pageId = 0;
+        
+        player = new Archer((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2-player.getSize()/2,(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()/2-player.getSize()/2,100,100,0);
+        enemies = new ArrayList<Enemy>();
+        obstacles = new ArrayList<Wall>();
+        enemyProjectiles = new ArrayList<Projectile>();
+        background = new Background(-Display.getBackgroundX()/2,-Display.getBackgroundY()/2);
+        reloadCount = 0;
+        difficulty = 0;
+        score = 0;
+        pageId = 0;
+        GameUpdate gu = new GameUpdate(this);
+        Thread t = new Thread(gu);
+        t.start();
+        
+        draw.fired();
+      }
       draw.repaint();
+    } else if (pageId == 3){
+      draw.setId(3);
+      draw.repaint();
+    } else if (pageId == 4){
+      draw.setId(4);
+      if (draw.getLeftClick()){
+        pageId = 1;
+      }
+      draw.repaint();
+    }
   }
   public void setDisplay(Display d) {
     draw = d;
@@ -626,7 +693,7 @@ class GameUpdate implements Runnable {
   @Override
   public void run() {
     long time;
-    while (g.player.getHealth() > 0) {
+    while (true) {
       time = System.currentTimeMillis();
       g.update();
       while (System.currentTimeMillis() - time < 10)
