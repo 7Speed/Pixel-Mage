@@ -1,3 +1,4 @@
+//Import
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -20,20 +21,41 @@ import java.awt.Font;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+/*
+* Display.java
+* Last updated Jan 18, 2018
+* Draws alll the sprites and check key and mous pressed
+* @Author Sean Jeong
+*/
+
+/*
+ * Display.class
+ * Main class for display.java
+*/
 public class Display extends JPanel implements KeyListener, MouseListener{
-  
-  private BufferedImage title, instructions, archer, paladin, rogue,fighter, wizard, hunter, enemy, projectile,fireBall, airBall, earthBall, waterBall, darkBall, background, healthOrb, speedOrb, dexOrb, attOrb, sniper, boss, speedy, glassCannon;
+//Declare/set initial variables----------------------------------------------------------------------------------------  
+//Sprites variables
+  private BufferedImage title, instructions, archerSheet, paladinSheet, rogueSheet,fighterSheet, wizardSheet, hunterSheet, enemy, projectile,fireBall, airBall, earthBall, waterBall, darkBall, fireExplosion, fireSpell,iceExplosion,iceSpell, airSpell, airTrapExplosion, background, healthOrb, speedOrb, dexOrb, attOrb, sniper, boss, speedy, glassCannon;
+  BufferedImage[] archer, paladin, rogue, fighter,wizard, hunter;
+  //Spritesheet variables
+  private int currentSprite=0;
+  private int currentStep=0;
+  private int sCount=-1;
+  private int aCount=-1;
+  private int dCount=-1; 
+  private int wCount=-1;
+  //Size and coordinate variables
   public static int middleX, middleY;
-  private static int backgroundX=4000;
-  private static int backgroundY=4000;
+  private static int backgroundX=5120;
+  private static int backgroundY=3840;
   private int backgroundXCoord = -backgroundX/2;
   private int backgroundYCoord = -backgroundY/2;
-  private static int TILE_SIZE=4000;
-  //private final Player player;
   public int x = 0;
   public int y = 0;
+  //Hp and mp stats
   public double mana = 100;
   public int health = 100;
+  //Clicking inputs
   private boolean dPressed = false;
   private boolean wPressed = false;
   private boolean aPressed = false;
@@ -44,72 +66,189 @@ public class Display extends JPanel implements KeyListener, MouseListener{
   private boolean threePressed = false;
   private boolean fourPressed = false;
   private boolean fivePressed = false;
+  //Class num to determine which class is which
   private int classNum = 0;
+  //Array for enmeis,projectiles and other misc.
   private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
   private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
   private ArrayList<Projectile> enemyProjectiles = new ArrayList<Projectile>();
   private ArrayList<Wall> obstacles = new ArrayList<Wall>();
+  //Pages and score
   private int pageId;
   private int score;
+  
+  //Methods------------------------------------------------------------------------------------------------------------
+  /*
+ * setX
+ * Sets x value of playe
+ * @param x, sets the x value
+*/
   public void setX(int x){
     this.x = x;
   }
+  
+  /*
+ * setY
+ * Sets y value of playe
+ * @param y, sets the y value
+*/
   public void setY(int y){
     this.y = y;
   }
+  
+  /*
+ * setHealth
+ * Sets the health of the player
+ * @param health, health value
+*/
   public void setHealth(int health){
     this.health = health;
   }
+  
+    /*
+ * setMana
+ * Sets the mana of the player
+ * @param mana, mana value
+*/
   public void setMana(double mana){
     this.mana = mana;
   }
+  
+      /*
+ * setScore
+ * Sets the mana of the player
+ * @param score, game score value
+*/
   public void setScore(int score){
     this.score = score;
   }
+  
+  /*
+ * setCoord
+ * Sets the coordinates of the player
+ * @param x, player x value
+ * @param y, player y value
+*/
   public void setCoord(int [] coord){
     this.x = coord[0];
     this.y = coord[1];
   }
+  
+    /*
+ * background
+ * Sets the coordinates of the background
+ * @param background, background class which stores x and y values
+*/
   public void background(Background background){
     backgroundXCoord = background.getX();
     backgroundYCoord = background.getY();
   }
+  
+      /*
+ * getBackgroundX
+ * Sets the coordinates of the backgroundX
+ * @return backgroundX, set the current x value of the background
+*/
   public static int getBackgroundX(){
     return backgroundX;
   }
+  
+        /*
+ * getBackgroundY
+ * Sets the coordinates of the backgroundY
+ * @return backgroundY, set the current y value of the background
+*/
   public static int getBackgroundY(){
     return backgroundY;
   }
-  
+      
+  /*
+ * enemies
+ * Gets the arraylist of the enemeis from display class
+ * @param enemies, all the enemies in the game
+*/
   public void enemies(ArrayList<Enemy> enemies){
     this.enemies = enemies;
   }
   
+   /*
+ * projectiles
+ * Gets the arraylist of the projectiles from display class
+ * @param projectiles, all the player's projectiles in the game
+*/
   public void projectiles(ArrayList<Projectile> projectiles){
     this.projectiles = projectiles;
   }
   
+     /*
+ * enemyProjectiles
+ * Gets the arraylist of the enemies projectiles from display class
+ * @param enemyProjectiles, all the enemies projectiles in the game
+*/
   public void enemyProjectiles(ArrayList<Projectile> enemyProjectiles){
     if (enemyProjectiles!=null){
       this.enemyProjectiles = enemyProjectiles;
     }
   }
   
+       /*
+ * obstacles
+ * Gets the arraylist of the obstacles from display class
+ * @param obstacles, all the obstacles in the game
+*/
   public void obstacles(ArrayList<Wall> obstacles){
     this.obstacles = obstacles;
   }
+  
+/*
+ * getLeftClick
+ * Gets if the left key is clicked 
+ * @return leftClick, if leftClick is pressed returns true
+*/
   public boolean getLeftClick(){
     return leftClick;
+    
+  /*
+ * setId
+ * Sets the id number to know what page to display
+ * @param id, int to set id as
+*/  
   }
   public void setId(int id){
     pageId = id;
   }
+  
+  /*
+ * fired
+ * Sets leftClick as false if athe player shoots
+*/
   public void fired(){
     leftClick = false;
   }
+  
+ /*
+ * mouseClicked
+ * Sees if mouse is clicked and then unclicks
+ * @param MouseEvent e
+*/
   public void mouseClicked(MouseEvent e) {}      
+   /*
+ * mouseEntered
+ * Sees if mouse is clicked and then holds
+ * @param MouseEvent e
+*/
   public void mouseEntered(MouseEvent e) {}
+     /*
+ * mouseExited
+ * Sees if mouse is unclicked and then stops
+ * @param MouseEvent e
+*/
   public void mouseExited(MouseEvent e) {}
+  /*
+ * mousePressed
+ * Sets the leftClick as true if leftclick is pressed and update class if roght click is pressed
+ * @param MouseEvent e
+*/
   public void mousePressed(MouseEvent e) {
     if (e.getButton() == MouseEvent.BUTTON1){
       leftClick = true;
@@ -121,12 +260,22 @@ public class Display extends JPanel implements KeyListener, MouseListener{
       }
     }
   }
+     /*
+ * mouseReleased
+ * Sees if left click is unclicked and then sets leftClick as false
+ * @param MouseEvent e
+*/
   public void mouseReleased(MouseEvent e) {
     if (e.getButton() == MouseEvent.BUTTON1){
       leftClick = false;
     }
   }
-  
+
+     /*
+ * keyTyped
+ * Sees what key was pressed and sets that keypressed as true
+ * @param KeyEvent e
+*/
   public void keyTyped(KeyEvent e) {
     if(e.getKeyChar() == '1' ){
       onePressed = !onePressed;
@@ -200,17 +349,93 @@ public class Display extends JPanel implements KeyListener, MouseListener{
       }
     }
   }
-  
-  public void keyPressed(KeyEvent e) {//////////////////////////////////////////////////////////////////
-    if(e.getKeyChar() == 'd' )
-      dPressed = true;
-    if(e.getKeyChar() == 'w' )
-      wPressed = true;
-    if(e.getKeyChar() == 'a' )
-      aPressed = true;
-    if(e.getKeyChar() == 's' )
-      sPressed = true;
+ /*
+ * keyPressed
+ * Sees if keyboard is pressed and sets the Pressed values as true, also updates the currentSprite for sprite sheets
+ * @param KeyEvent e
+*/
+  public void keyPressed(KeyEvent e) {
+    if(e.getKeyChar() == 's' ){
+      aCount=-1;
+      dCount=-1;
+      wCount=-1; 
+      sCount++;
+      if (sCount==0){
+        currentSprite=0;
+        sCount=9;
+      }
+      if (sCount==10){
+        sCount=0;
+        if (currentSprite==0){
+          currentSprite=2;
+        }else {
+          currentSprite=0;
+        }      
+      }
+      sPressed=true;
+    }
+    if(e.getKeyChar() == 'a' ){
+      sCount=-1;
+      dCount=-1;
+      wCount=-1;
+      aCount++;
+      if (aCount==0){
+        currentSprite=3;
+        aCount=9;
+      }
+      if (aCount==10){
+        aCount=0;
+        if (currentSprite==3){
+          currentSprite=5;
+        }else {
+          currentSprite=3;
+        }      
+      }
+      aPressed=true;
+    }
+    if(e.getKeyChar() == 'd' ){
+      sCount=-1;
+      aCount=-1;
+      wCount=-1;
+      dCount++;
+      if (dCount==0){
+        currentSprite=6;
+        dCount=9;
+      }
+      if (dCount==10){
+        dCount=0;
+        if (currentSprite==6){
+          currentSprite=8;
+        }else {
+          currentSprite=6;
+        }      
+      }
+      dPressed=true;
+    }
+    if(e.getKeyChar() == 'w' ){
+      sCount=-1;
+      aCount=-1;
+      dCount=-1;
+      wCount++;
+      if (wCount==0){
+        currentSprite=9;
+        wCount=9;
+      }
+      if (wCount==10){
+        wCount=0;
+        if (currentSprite==9){
+          currentSprite=11;
+        }else {
+          currentSprite=9;
+        }      
+      }
+      wPressed=true;
+    }
   }
+   /* keyReleased
+ * Unsets Pressed values after key is released
+ * @param KeyEvent e
+*/
   public void keyReleased(KeyEvent e) {
     if(e.getKeyChar() == 'd' )
       dPressed = false;
@@ -222,91 +447,56 @@ public class Display extends JPanel implements KeyListener, MouseListener{
       sPressed = false;
   }
   
+ /* Display
+ * Imports all the images 
+*/
   public Display() {
-    super();// Call the constructor for normal JPanel
-    //player = game.getPlayer();
+    super();
     addKeyListener(this);
     addMouseListener(this);
-    /*
-     addMouseListener(new MouseAdapter() {
-     @Override
-     public void mousePressed(MouseEvent arg0) {
-     //System.out.println("Down");
-     player.setFiring(true);
-     }
-     
-     @Override
-     public void mouseReleased(MouseEvent e) {
-     // System.out.println("Up");
-     player.setFiring(false);
-     }
-     });
-     */
     
     addComponentListener(new ComponentAdapter() {
       public void componentResized(ComponentEvent arg0) {
-        middleX = getWidth() / 2 - archer.getWidth() / 2;
-        middleY = getHeight() / 2 - archer.getHeight() / 2;
+        middleX = getWidth() / 2 - 50;
+        middleY = getHeight() / 2 - 50;
       }
     });
-    /*
-     addKeyListener(new KeyAdapter() {
-     public void keyPressed(KeyEvent e) {
-     if (e.getKeyChar() == 'd')
-     game.player.setXDir(1);
-     if (e.getKeyChar() == 'w')
-     game.player.setYDir(-1);
-     if (e.getKeyChar() == 'a')
-     game.player.setXDir(-1);
-     if (e.getKeyChar() == 's')
-     game.player.setYDir(1);
-     }
-     
-     public void keyReleased(KeyEvent e) {
-     if (e.getKeyChar() == 'd')
-     game.player.setXDir(0);
-     if (e.getKeyChar() == 'w')
-     game.player.setYDir(0);
-     if (e.getKeyChar() == 'a')
-     game.player.setXDir(0);
-     if (e.getKeyChar() == 's')
-     game.player.setYDir(0);
-     }
-     });
-     */
     
-    
-    
-    // //------------------------------------------------
-    // public boolean getLeftClick(){
-    // return leftClick;
-    // }
-    // public void fired(){
-    // leftClick = false;
-    // }
-    // public void mouseClicked(MouseEvent e) {}
-    // public void mouseEntered(MouseEvent e) {}
-    // public void mouseExited(MouseEvent e) {}
-    // public void mousePressed(MouseEvent e) {
-    // leftClick = true;
-    // }
-    // public void mouseReleased(MouseEvent e) {
-    // leftClick = false;
-    // }
-    // //------------------------------------------------
-    setDoubleBuffered(true);// Make the panel no blink
+    setDoubleBuffered(true);// Make the panel not blink
     setFocusable(true);
     try {
       title = resize(ImageIO.read(new File("title.png")), (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth(), (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight());
       instructions = resize(ImageIO.read(new File("Instructions.png")), (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth(), (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight());
       
-      archer = resize(ImageIO.read(new File("Archer.png")), Player.getSize(), Player.getSize());// Set the image for
-      paladin = resize(ImageIO.read(new File("Paladin.png")), Player.getSize(), Player.getSize());
-      rogue = resize(ImageIO.read(new File("Rogue.png")), Player.getSize(), Player.getSize());
-      fighter = resize(ImageIO.read(new File("Wizard.png")), Player.getSize(), Player.getSize());
-      wizard = resize(ImageIO.read(new File("Wizard.png")), Player.getSize(), Player.getSize());
-      hunter = resize(ImageIO.read(new File("Archer.png")), Player.getSize(), Player.getSize());
-      // the sprite
+      archerSheet = ImageIO.read(new File("ArcherSheet.png"));
+      paladinSheet = ImageIO.read(new File("PaladinSheet.png"));
+      rogueSheet =ImageIO.read(new File("RogueSheet.png"));
+      fighterSheet = ImageIO.read(new File("FighterSheet.png"));
+      wizardSheet =ImageIO.read(new File("WizardSheet.png"));
+      hunterSheet= ImageIO.read(new File("HunterSheet.png"));
+      
+      final int width = 100;
+      final int height = 100;
+      final int rows = 4;
+      final int cols = 3;
+      archer = new BufferedImage[rows * cols];
+      paladin =new BufferedImage[rows * cols];
+      rogue=new BufferedImage[rows * cols];
+      fighter=new BufferedImage[rows * cols];
+      wizard=new BufferedImage[rows * cols];
+      hunter=new BufferedImage[rows * cols];
+      
+      for (int j = 0; j < rows; j++){
+        for (int i = 0; i < cols; i++){
+          archer[(j * cols) + i] = archerSheet.getSubimage(i * width,j * height,width,height);
+          paladin[(j * cols) + i] = paladinSheet.getSubimage(i * width,j * height,width,height);
+          rogue[(j * cols) + i] = rogueSheet.getSubimage(i * width,j * height,width,height);
+          fighter[(j * cols) + i] = fighterSheet.getSubimage(i * width,j * height,width,height);
+          wizard[(j * cols) + i] = wizardSheet.getSubimage(i * width,j * height,width,height);
+          hunter[(j * cols) + i] = hunterSheet.getSubimage(i * width,j * height,width,height);
+        }
+      }
+      
       enemy = resize(ImageIO.read(new File("Snake1.png")),Enemy.getSize(),Enemy.getSize());
       sniper = resize(ImageIO.read(new File("Sniper.png")),Enemy.getSize(),Enemy.getSize());
       boss = resize(ImageIO.read(new File("Boss.png")),Enemy.getSize(),Enemy.getSize());
@@ -326,13 +516,22 @@ public class Display extends JPanel implements KeyListener, MouseListener{
       dexOrb = resize(ImageIO.read(new File("DexOrb.png")),40,40);
       attOrb = resize(ImageIO.read(new File("AttOrb.png")),40,40);
       
+      fireSpell=resize(ImageIO.read(new File("fire.png")),240,240);
+      iceExplosion=resize(ImageIO.read(new File("ice.png")),50,50);
+      iceSpell=resize(ImageIO.read(new File("ice.png")),240,240);
+      airSpell=resize(ImageIO.read(new File("tornado.png")),240,240);
+      airTrapExplosion=resize(ImageIO.read(new File("tornado.png")),500,500);
     } catch (IOException e) {
       e.printStackTrace();// If the image does not exist this will happen
     }
-    middleX = getWidth() / 2 - archer.getWidth() / 2;
-    middleY = getHeight() / 2 - archer.getHeight() / 2;
+    middleX = getWidth() / 2 - 50;
+    middleY = getHeight() / 2 - 50;
   }
   
+/* paint
+ * Draws all the sprites and shapes
+ * @param Graphics g
+*/
   public void paint(Graphics g) {
     if (pageId == 0){
       g.clearRect(0, 0, getWidth(), getHeight());
@@ -343,40 +542,25 @@ public class Display extends JPanel implements KeyListener, MouseListener{
     } else if (pageId == 1){
       g.clearRect(0, 0, getWidth(), getHeight());
       g.drawImage(background, backgroundXCoord , backgroundYCoord, this);
-      /*int xOff=- player.getX()+middleX- backgroundX/2;
-       int yOff= - player.getY()+middleY- backgroundY/2;
-       for (int i = 0; i * TILE_SIZE <= getWidth() + TILE_SIZE; i++) {
-       for (int j = 0; j * TILE_SIZE <= getHeight() + TILE_SIZE; j++) {
-       g.drawImage(background, xOff + i * TILE_SIZE, yOff + j * TILE_SIZE, this);
-       }
-       }*/
+      
       if (classNum == 0){
-        g.drawImage(archer, x, y, this);
+        g.drawImage(archer[currentSprite], x, y, this);
       } else if (classNum == 1) {
-        g.drawImage(paladin, x, y, this);
+        g.drawImage(paladin[currentSprite], x, y, this);
       } else if (classNum == 2){
-        g.drawImage(rogue, x, y, this);
+        g.drawImage(rogue[currentSprite], x, y, this);
       } else if (classNum == 3){
-        g.drawImage(fighter, x, y, this);
+        g.drawImage(fighter[currentSprite], x, y, this);
       } else if (classNum == 4){
-        g.drawImage(wizard, x, y, this);
+        g.drawImage(wizard[currentSprite], x, y, this);
       } else if (classNum == 5){
-        g.drawImage(hunter, x, y, this);
+        g.drawImage(hunter[currentSprite], x, y, this);
       }
       
       g.setColor(Color.RED);
       g.fillRect(x, y - 15, (int)Math.round(health*1.0/Player.getHealthMax() * Player.getSize()), 5);
       g.setColor(Color.BLUE);
       g.fillRect(x, y - 10, (int)Math.round(mana*1.0/Player.getManaMax() * Player.getSize()), 5);
-      
-      //ArrayList<Enemy> enemies = game.enemies;
-      /*for (Enemy e : enemies) {
-       if (player.inRenderRange(e, middleX, middleY)) {
-       int dx = e.getX() - player.getX() + middleX + Enemy.getHalfSize();
-       int dy = e.getY() - player.getY() + middleY + Enemy.getHalfSize();
-       g.drawImage(enemy, dx, dy, this);
-       }
-       }*/
       
       for (int i = 0; i < enemies.size(); i++){
         if ((enemies.get(i).getX() - enemies.get(i).getSize()/2 <= x + middleX && enemies.get(i).getX() + enemies.get(i).getSize()/2 >= x - middleX) && (enemies.get(i).getY() - enemies.get(i).getSize()/2 <= y + middleY && enemies.get(i).getY() + enemies.get(i).getSize()/2 >= y - middleY)) {
@@ -408,31 +592,13 @@ public class Display extends JPanel implements KeyListener, MouseListener{
         }
       }
       
-      /*
-       for (Projectile p : player.getProjectiles()) {
-       if ((projectiles.get(i).getClass().getName().equals("Arrow"))||(projectiles.get(i).getClass().getName().equals("Sword"))||(projectiles.get(i).getClass().getName().equals("Dagger"))){
-       if (player.inRenderRange(p, middleX, middleY)) {
-       //int dx = p.getX() - player.getX() + middleX ;
-       //int dy = p.getY() - player.getY() + middleY ;
-       //g.drawImage(projectile, dx, dy, this);
-       g.drawImage(projectile, p
-       }
-       }
-       }
-       */
-      
-      
-      
       for (int i = 0; i < obstacles.size(); i++){
         g.setColor(new Color(156, 93, 82));
         g.fillPolygon(obstacles.get(i).getHitbox());
       }
-      //Graphics2D[] projectileDrawings = new Graphics2D[numProjectiles];
-      //g2d.setColor(Color.WHITE);
-      //Rectangle rect2 = new Rectangle(100, 100, 20, 20);
       if ((classNum == 1) && (twoPressed)){
         g.setColor(Color.BLUE);
-        g.fillRect(x-100+Player.getSize()/2,y-100+Player.getSize()/2,200,200);
+        g.drawRect(x-100+Player.getSize()/2,y-100+Player.getSize()/2,200,200);
       }
       for (int i = 0; i < projectiles.size(); i++){
         if ((projectiles.get(i).getClass().getName().equals("Arrow"))||(projectiles.get(i).getClass().getName().equals("Sword"))||(projectiles.get(i).getClass().getName().equals("Dagger"))||(projectiles.get(i).getClass().getName().equals("Fist"))||(projectiles.get(i).getClass().getName().equals("Bolt"))){
@@ -444,36 +610,31 @@ public class Display extends JPanel implements KeyListener, MouseListener{
         } else if (projectiles.get(i) instanceof FireDagger){
           g.drawImage(fireBall,(projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2, this);
         } else if (projectiles.get(i) instanceof FireExplosion){
-          g.setColor(Color.RED);
-          g.fillRect((projectiles.get(i)).getX()-25,(projectiles.get(i)).getY()-25,50,50);
+          g.drawImage(fireExplosion, (projectiles.get(i)).getX()-25,(projectiles.get(i)).getY()-25,this);
         } else if (projectiles.get(i) instanceof FireFist){
           g.drawImage(fireBall,(projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2, this);
         } else if (projectiles.get(i) instanceof FireSpell){
-          g.setColor(Color.RED);
-          //g.drawRect((int)projectiles.get(i).getHitbox().getX(), (int)projectiles.get(i).getHitbox().getY(), (int)projectiles.get(i).getHitbox().getWidth(), (int)projectiles.get(i).getHitbox().getHeight());
-          g.fillRect((projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2,projectiles.get(i).getWidth(),projectiles.get(i).getHeight());
+          g.drawImage(fireSpell, (projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2,this);
         } else if (projectiles.get(i) instanceof FireTrap){
           g.setColor(Color.RED);
           g.fillRect((projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2,projectiles.get(i).getWidth(),projectiles.get(i).getHeight());
         } else if (projectiles.get(i) instanceof FireTrapExplosion){
           g.setColor(Color.RED);
-          g.fillRect((projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2,projectiles.get(i).getWidth(),projectiles.get(i).getHeight());
+          g.drawImage(fireSpell, (projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2,this);
         } else if (projectiles.get(i) instanceof IceArrow){
           g.drawImage(waterBall,(projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2, this);
         } else if (projectiles.get(i) instanceof IceExplosion){
-          g.setColor(Color.BLUE);
-          g.fillRect((projectiles.get(i)).getX()-25,(projectiles.get(i)).getY()-25,50,50);
+          g.drawImage(iceExplosion, (projectiles.get(i)).getX()-25,(projectiles.get(i)).getY()-25,this);
         } else if (projectiles.get(i) instanceof IceFist){
           g.drawImage(waterBall,(projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2, this);
         } else if (projectiles.get(i) instanceof IceSpell){
-          g.setColor(Color.BLUE);
-          g.fillRect((projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2,projectiles.get(i).getWidth(),projectiles.get(i).getHeight());
+          g.drawImage(iceSpell, (projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2,this);
         } else if (projectiles.get(i) instanceof IceTrap){
           g.setColor(Color.BLUE);
           g.fillRect((projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2,projectiles.get(i).getWidth(),projectiles.get(i).getHeight());
         } else if (projectiles.get(i) instanceof IceTrapExplosion){
           g.setColor(Color.BLUE);
-          g.fillRect((projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2,projectiles.get(i).getWidth(),projectiles.get(i).getHeight());
+          g.drawImage(iceSpell, (projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2,this);
         } else if (projectiles.get(i) instanceof EarthArrow){
           g.drawImage(earthBall,(projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2, this);
         } else if (projectiles.get(i) instanceof EarthStun){
@@ -492,14 +653,13 @@ public class Display extends JPanel implements KeyListener, MouseListener{
         } else if (projectiles.get(i) instanceof AirFist){
           g.drawImage(airBall,(projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2, this);
         } else if (projectiles.get(i) instanceof AirSpell){
-          g.setColor(Color.BLUE);
-          g.fillRect((projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2,projectiles.get(i).getWidth(),projectiles.get(i).getHeight());
+          g.drawImage(airSpell, (projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2,this);
         } else if (projectiles.get(i) instanceof AirTrap){
           g.setColor(Color.BLUE);
           g.fillRect((projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2,projectiles.get(i).getWidth(),projectiles.get(i).getHeight());
         } else if (projectiles.get(i) instanceof AirTrapExplosion){
           g.setColor(Color.BLUE);
-          g.drawRect((projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2,projectiles.get(i).getWidth(),projectiles.get(i).getHeight());
+          g.drawImage(airTrapExplosion, (projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2,this);
         } else if (projectiles.get(i) instanceof DarkArrow){
           g.drawImage(darkBall,(projectiles.get(i)).getX()-projectiles.get(i).getWidth()/2,(projectiles.get(i)).getY()-projectiles.get(i).getHeight()/2, this);
         } else if (projectiles.get(i) instanceof DarkSword){
@@ -534,6 +694,10 @@ public class Display extends JPanel implements KeyListener, MouseListener{
     }
   }
   
+  /* getDPressed
+ * Draws all the sprites and shapes
+ * @param Graphics g
+*/
   public boolean getDPressed(){
     return dPressed;
   }
@@ -577,117 +741,103 @@ public class Display extends JPanel implements KeyListener, MouseListener{
     this.fivePressed = fivePressed;
   }
   public int getNumPressed(){
-    /*if (!(((classNum == 1)&&(twoPressed))||((classNum == 2)&&(threePressed))||((classNum == 2)&&(fourPressed))||((classNum == 2)&&(fivePressed))||((classNum == 3)&&(onePressed))||((classNum == 3)&&(threePressed))||((classNum == 3)&&(fivePressed)))){
-     if(onePressed){
-     return 1;
-     } else if (twoPressed){
-     return 2;
-     } else if (threePressed){
-     return 3;
-     } else if (fourPressed){
-     return 4;
-     } else if (fivePressed){
-     return 5;
-     } else {
-     return 0;
-     }
-     } else */if ((classNum == 1)&&(twoPressed)){
-       if(onePressed){
-         return 1;
-       } else if (threePressed){
-         return 3;
-       } else if (fourPressed){
-         return 4;
-       } else if (fivePressed){
-         return 5;
-       } else {
-         return 0;
-       }
-     } else if ((classNum == 2)&&(threePressed)){
-       if(onePressed){
-         return 1;
-       } else if (twoPressed){
-         return 2;
-       } else if (fourPressed){
-         return 4;
-       } else if (fivePressed){
-         return 5;
-       } else {
-         return 0;
-       }
-     } else if ((classNum == 2)&&(fourPressed)){
-       if(onePressed){
-         return 1;
-       } else if (twoPressed){
-         return 2;
-       } else if (threePressed){
-         return 3;
-       } else if (fivePressed){
-         return 5;
-       } else {
-         return 0;
-       }
-     } else if ((classNum == 2)&&(fivePressed)){
-       if(onePressed){
-         return 1;
-       } else if (twoPressed){
-         return 2;
-       } else if (threePressed){
-         return 3;
-       } else if (fourPressed){
-         return 4;
-       } else {
-         return 0;
-       }
-     } else if ((classNum == 3)&&(onePressed)){
-       if (twoPressed){
-         return 2;
-       } else if (threePressed){
-         return 3;
-       } else if (fourPressed){
-         return 4;
-       } else {
-         return 0;
-       }
-     } else if ((classNum == 3)&&(threePressed)){
-       if(onePressed){
-         return 1;
-       } else if (twoPressed){
-         return 2;
-       } else if (fourPressed){
-         return 4;
-       } else if (fivePressed){
-         return 5;
-       } else {
-         return 0;
-       }
-     } else if ((classNum == 3)&&(fivePressed)){
-       if(onePressed){
-         return 1;
-       } else if (twoPressed){
-         return 2;
-       } else if (threePressed){
-         return 3;
-       } else if (fourPressed){
-         return 4;
-       } else {
-         return 0;
-       }
-     } else {
-       if(onePressed){
-         return 1;
-       } else if (twoPressed){
-         return 2;
-       } else if (threePressed){
-         return 3;
-       } else if (fourPressed){
-         return 4;
-       } else if (fivePressed){
-         return 5;
-       } else {
-         return 0;
-       }
-     }
+    if ((classNum == 1)&&(twoPressed)){
+      if(onePressed){
+        return 1;
+      } else if (threePressed){
+        return 3;
+      } else if (fourPressed){
+        return 4;
+      } else if (fivePressed){
+        return 5;
+      } else {
+        return 0;
+      }
+    } else if ((classNum == 2)&&(threePressed)){
+      if(onePressed){
+        return 1;
+      } else if (twoPressed){
+        return 2;
+      } else if (fourPressed){
+        return 4;
+      } else if (fivePressed){
+        return 5;
+      } else {
+        return 0;
+      }
+    } else if ((classNum == 2)&&(fourPressed)){
+      if(onePressed){
+        return 1;
+      } else if (twoPressed){
+        return 2;
+      } else if (threePressed){
+        return 3;
+      } else if (fivePressed){
+        return 5;
+      } else {
+        return 0;
+      }
+    } else if ((classNum == 2)&&(fivePressed)){
+      if(onePressed){
+        return 1;
+      } else if (twoPressed){
+        return 2;
+      } else if (threePressed){
+        return 3;
+      } else if (fourPressed){
+        return 4;
+      } else {
+        return 0;
+      }
+    } else if ((classNum == 3)&&(onePressed)){
+      if (twoPressed){
+        return 2;
+      } else if (threePressed){
+        return 3;
+      } else if (fourPressed){
+        return 4;
+      } else {
+        return 0;
+      }
+    } else if ((classNum == 3)&&(threePressed)){
+      if(onePressed){
+        return 1;
+      } else if (twoPressed){
+        return 2;
+      } else if (fourPressed){
+        return 4;
+      } else if (fivePressed){
+        return 5;
+      } else {
+        return 0;
+      }
+    } else if ((classNum == 3)&&(fivePressed)){
+      if(onePressed){
+        return 1;
+      } else if (twoPressed){
+        return 2;
+      } else if (threePressed){
+        return 3;
+      } else if (fourPressed){
+        return 4;
+      } else {
+        return 0;
+      }
+    } else {
+      if(onePressed){
+        return 1;
+      } else if (twoPressed){
+        return 2;
+      } else if (threePressed){
+        return 3;
+      } else if (fourPressed){
+        return 4;
+      } else if (fivePressed){
+        return 5;
+      } else {
+        return 0;
+      }
+    }
   }
   public int getClassNum(){
     return classNum;

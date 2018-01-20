@@ -1,8 +1,8 @@
 class Background{
   private int positionX;
   private int positionY;
-  private static int width = 4000;
-  private static int height = 4000;
+  private static int width = 5120;
+  private static int height = 3840;
   Background(int positionX, int positionY){
     this.positionX = positionX;
     this.positionY = positionY;

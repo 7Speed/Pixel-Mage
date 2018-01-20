@@ -1,4 +1,4 @@
-import javafx.scene.shape.Circle;
+//import javafx.scene.shape.Circle;
 class FireExplosion extends Projectile{
   //Circle hitbox;
   FireExplosion(int centerX, int centerY){
